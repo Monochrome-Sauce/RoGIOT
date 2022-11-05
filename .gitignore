@@ -1,0 +1,21 @@
+#Executables
+*.out
+*.exe
+
+#Object files
+*.o
+
+#Libraries
+*.lib
+*.so
+*.dll
+
+#Editor specific files
+compile_commands.json
+*.swp
+.~
+
+#Build system output
+Makefile
+[Cc][Mm]ake*
+!CMakeLists.txt
