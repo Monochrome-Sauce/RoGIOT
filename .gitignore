@@ -6,12 +6,14 @@
 *.o
 
 #Libraries
-*.lib
+*.a
 *.so
+*.lib
 *.dll
 
 #Editor specific files
 compile_commands.json
+.cache
 *.swp
 .~
 
