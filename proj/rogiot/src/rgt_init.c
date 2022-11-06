@@ -1,6 +1,6 @@
 #include "../rgt.h"
 #include "Pipe.h"
-#include "commonMacros.h"
+#include "macros.h"
 
 #include <sys/types.h>
 #include <stdlib.h>
