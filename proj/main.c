@@ -1,6 +1,19 @@
-#include "rogiot.h"
+#include "rogiot/rgt.h"
+
+#include <stdlib.h>
+#include <stdio.h>
+#include <unistd.h>
+
+
+int x = 0;
+void print(void)
+{
+	printf("%d | %d\n", x, getpid());
+}
+
 
 int main(void)
 {
-	print_hello_world(stdout);
+	atexit(print);
+	x = rgt__init();
 }
