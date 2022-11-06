@@ -1,8 +1,8 @@
-#ifndef COMMON_MACROS_H
-#define COMMON_MACROS_H
+#ifndef MACROS_H
+#define MACROS_H
 
 
-#define SIZEOF_ARRAY(arr) (sizeof (arr) / sizeof (*arr))
+#define SIZEOF_ARRAY(arr) (sizeof (arr) / sizeof (*(arr)))
 
 
-#endif /* COMMON_MACROS_H */
+#endif /* MACROS_H */
