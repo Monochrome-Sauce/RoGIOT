@@ -16,6 +16,8 @@ creating a debug-output console.
 extern bool rgt__init(void);
 
 /* #Clears the resources used by the library.
+! The call may take time to finish, in the case where it has to wait for a
+thread/process to finish.
 !
 ! Must be called after rgt::init().
 */

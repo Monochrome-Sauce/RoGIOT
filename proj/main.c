@@ -19,8 +19,7 @@ int main(void)
 	assert(written > 0);
 	
 	
-	sleep(2);
-	fclose(xterm);
 	rgt__deinit();
+	fclose(xterm);
 	return EXIT_SUCCESS;
 }

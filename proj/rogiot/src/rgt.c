@@ -5,6 +5,7 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <unistd.h>
+#include <threads.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <memory.h>
@@ -13,7 +14,7 @@
 
 static struct
 {
-	pid_t childPid;
+	thrd_t childThread;
 	struct Pipe pipe;
 } g_parent;
 
@@ -39,6 +40,14 @@ static void inner__close_fds(const size_t len, int fds[len])
 
 #define CLOSE_FD_ARRAY(fds) inner__close_fds(SIZEOF_ARRAY(fds), fds)
 
+static int start_mainloop(void *pipe)
+{
+	(void)pipe;
+	sleep(3);
+	return 0;
+}
+
+
 
 extern bool rgt__init(void)
 {
@@ -63,32 +72,14 @@ extern bool rgt__init(void)
 	};
 	
 	
-	g_parent.childPid = fork();
-	if (unlikely(g_parent.childPid < 0)) {
-		CLOSE_FD_ARRAY(parentToChild);
-		CLOSE_FD_ARRAY(childToParent);
-		return false;
-	}
-	else if (g_parent.childPid > 0) { /* father */
-		inner__close_pipe(&childPipe);
-		return true;
-	}
-	else { /* child */
-		inner__close_pipe(&g_parent.pipe);
-		/* child process: execute it and pass it the pipe */
-		exit(EXIT_SUCCESS);
-	}
+	const int res = thrd_create(&g_parent.childThread, start_mainloop, &childPipe);
+	return res == 0;
 }
 
-/* the child process may not call this function */
 extern void rgt__deinit(void)
 {
-	assert(g_parent.childPid > 0);
-	
 	/* child process: inform it to finish */
-	
-	int status = 0;
-	waitpid(g_parent.childPid, &status, WNOHANG);
+	thrd_join(g_parent.childThread, NULL);
 	inner__close_pipe(&g_parent.pipe);
 }
 
