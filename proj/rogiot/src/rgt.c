@@ -28,12 +28,12 @@ static void inner__close_pipe(struct Pipe *pipe)
 }
 
 
-static void inner__close_fds(size_t n, int fds[n])
+static void inner__close_fds(const size_t len, int fds[len])
 {
-	for (size_t i = 0; i < n; ++n)
+	for (size_t i = 0; i < len; ++i)
 	{
-		close(fds[n]);
-		fds[n] = -1;
+		close(fds[i]);
+		fds[i] = -1;
 	}
 }
 
