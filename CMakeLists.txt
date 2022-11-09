@@ -4,13 +4,13 @@ cmake_minimum_required(VERSION 3.20)
 set(LIB_OUTPUT rogiot)
 set(LIB_TESTER test.out)
 
+
+# ------------------------------------------------------------------------------
+# Static library
 set(SOURCE_LIST
 	proj/rogiot/src/rgt.c
 )
 
-
-# ------------------------------------------------------------------------------
-# Static library
 add_library(${LIB_OUTPUT} STATIC ${SOURCE_LIST})
 
 target_include_directories(${LIB_OUTPUT}

@@ -9,7 +9,7 @@
 
 int main(void)
 {
-	FILE* xterm = rgt__create_debug_output("good morning world!!!!");
+	FILE *xterm = rgt__create_debug_output("good morning world!!!!");
 	assert(xterm != NULL);
 	
 	bool success = rgt__init();

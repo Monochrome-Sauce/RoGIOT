@@ -2,13 +2,13 @@
 #include "Pipe.h"
 #include "macros.h"
 
-#include <stdio.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <unistd.h>
 #include <stdlib.h>
+#include <stdio.h>
 #include <memory.h>
 #include <assert.h>
-#include <unistd.h>
 
 
 static struct
