@@ -5,7 +5,7 @@ set(LIB_OUTPUT rogiot)
 set(LIB_TESTER test.out)
 
 set(SOURCE_LIST
-	proj/rogiot/src/rgt_init.c
+	proj/rogiot/src/rgt.c
 )
 
 
@@ -42,6 +42,6 @@ target_link_libraries(${LIB_TESTER}
 )
 
 target_compile_options(${LIB_TESTER}
-	PRIVATE -std=c17 -Werror -O1
+	PRIVATE -g -std=c17 -Werror -O1
 	PRIVATE -Wall -Wextra -Wsign-compare -Wconversion
 )
