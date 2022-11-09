@@ -40,7 +40,7 @@ static void inner__close_fds(const size_t len, int fds[len])
 #define CLOSE_FD_ARRAY(fds) inner__close_fds(SIZEOF_ARRAY(fds), fds)
 
 
-bool rgt__init(void)
+extern bool rgt__init(void)
 {
 	memset(&g_parent, 0, sizeof(g_parent));
 	
@@ -81,7 +81,7 @@ bool rgt__init(void)
 }
 
 /* the child process may not call this function */
-void rgt__deinit(void)
+extern void rgt__deinit(void)
 {
 	assert(g_parent.childPid > 0);
 	
@@ -92,7 +92,7 @@ void rgt__deinit(void)
 	inner__close_pipe(&g_parent.pipe);
 }
 
-FILE* rgt__create_debug_output(const char *title)
+extern FILE* rgt__create_debug_output(const char *title)
 {
 	int fds[2] = { 0 };
 	if(pipe(fds) == -1) {

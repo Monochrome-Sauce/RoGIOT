@@ -13,13 +13,13 @@ creating a debug-output console.
 !
 ! Must be called only once.
 */
-bool rgt__init(void);
+extern bool rgt__init(void);
 
 /* #Clears the resources used by the library.
 !
 ! Must be called after rgt::init().
 */
-void rgt__deinit(void);
+extern void rgt__deinit(void);
 
 
 /* #Creates an xterm terminal with write permissions only.
@@ -29,7 +29,7 @@ void rgt__deinit(void);
 ! @param title: C-string title for the created console. Pass NULL for a default title.
 ! @return: Line-buffered write-only FILE* stream.
 */
-FILE* rgt__create_debug_output(const char *title);
+extern FILE* rgt__create_debug_output(const char *title);
 
 
 #endif /* ROGIOT__RGT_H */
