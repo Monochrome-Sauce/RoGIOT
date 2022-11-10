@@ -120,9 +120,9 @@ extern FILE* rgt__create_debug_output(const char *title)
 		}
 		
 		execlp("xterm", "xterm",
-			"-title", title,
-			"-e", "cat", pipeFilepath,
-			(char*)NULL
+		       "-title", title,
+		       "-e", "cat", pipeFilepath,
+		       (char*)NULL
 		);
 		abort(); /* abort the child process after xterm finishes */
 	}
