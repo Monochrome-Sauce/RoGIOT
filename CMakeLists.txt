@@ -9,6 +9,7 @@ set(LIB_TESTER test.out)
 # Static library
 set(SOURCE_LIST
 	proj/rogiot/src/rgt.c
+	proj/rogiot/src/mainloop.c
 )
 
 add_library(${LIB_OUTPUT} STATIC ${SOURCE_LIST})

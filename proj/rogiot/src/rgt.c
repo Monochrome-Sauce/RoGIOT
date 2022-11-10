@@ -1,12 +1,14 @@
 #include "../rgt.h"
-#include "Pipe.h"
+#include "mainloop.h"
 #include "macros.h"
+
+#include <stdlib.h>
+#include <stdio.h>
+#include <memory.h>
+#include <threads.h>
 
 #include <sys/types.h>
 #include <unistd.h>
-#include <threads.h>
-#include <stdlib.h>
-#include <memory.h>
 
 
 static struct
@@ -37,11 +39,14 @@ static void inner__close_fds(const size_t len, int fds[len])
 
 #define CLOSE_FD_ARRAY(fds) inner__close_fds(SIZEOF_ARRAY(fds), fds)
 
-static int start_mainloop(void *pipe)
+static int start_mainloop(void *data)
 {
-	(void)pipe;
-	sleep(3);
-	return 0;
+	struct Pipe *comms = data;
+	struct Pipe term = {
+		.in = STDIN_FILENO,
+		.out = STDOUT_FILENO,
+	};
+	return mainloop(*comms, term);
 }
 
 
@@ -63,11 +68,10 @@ extern bool rgt__init(void)
 	
 	g_parent.pipe.in = childToParent[PIPE_FD_IN];
 	g_parent.pipe.out = parentToChild[PIPE_FD_OUT];
-	struct Pipe childPipe = {
-		.in = parentToChild[PIPE_FD_IN],
-		.out = childToParent[PIPE_FD_OUT],
-	};
 	
+	static struct Pipe childPipe;
+	childPipe.in = parentToChild[PIPE_FD_IN];
+	childPipe.out = childToParent[PIPE_FD_OUT];
 	
 	const int res = thrd_create(&g_parent.childThread, start_mainloop, &childPipe);
 	return res == 0;
@@ -76,6 +80,9 @@ extern bool rgt__init(void)
 extern void rgt__deinit(void)
 {
 	/* child process: inform it to finish */
+	const ssize_t res = write(g_parent.pipe.out, "Q", 1);
+	printf("write: %zd\n", res);
+	
 	thrd_join(g_parent.childThread, NULL);
 	inner__close_pipe(&g_parent.pipe);
 }

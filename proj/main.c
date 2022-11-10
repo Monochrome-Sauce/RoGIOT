@@ -1,10 +1,10 @@
 #include "rogiot/rgt.h"
 
-#define _GNU_SOURCE
 #include <stdlib.h>
 #include <stdio.h>
-#include <unistd.h>
 #include <assert.h>
+
+#include <unistd.h>
 
 
 int main(void)
@@ -18,6 +18,7 @@ int main(void)
 	int written = fprintf(xterm, "Initiated rgt: %s.\n", success ? "true" : "false");
 	assert(written > 0);
 	
+	sleep(3); /* have xterm properly show up */
 	
 	rgt__deinit();
 	fclose(xterm);
