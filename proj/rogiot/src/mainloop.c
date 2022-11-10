@@ -1,9 +1,12 @@
 #include "mainloop.h"
 #include "macros.h"
+#include "rogiot/rgt.h"
 
 #include <stdbool.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
+#include <errno.h>
 
 #include <unistd.h>
 #include <poll.h>
@@ -43,6 +46,12 @@ int mainloop(const struct Pipe comms, const struct Pipe term)
 		return EXIT_FAILURE;
 	}
 	
+	FILE *const xterm = rgt__create_debug_output("RoGIOT mainloop() debug");
+	if (xterm == NULL) {
+		perror("Failed to create a debug window");
+		return EXIT_FAILURE;
+	}
+	
 	enum {
 		TOPOLL_COMMS,
 		TOPOLL_TERM,
@@ -55,15 +64,16 @@ int mainloop(const struct Pipe comms, const struct Pipe term)
 	while (true)
 	{
 		if (unlikely(poll(toPoll, SIZEOF_ARRAY(toPoll), -1) < 0)) {
-			perror("\nPoll failed");
+			fprintf(xterm, "Failed to poll: %s", strerror(errno));
 			return EXIT_FAILURE;
 		}
 		
-		if (write(term.out, "Hello world\n", 12) < 0) {
+		if (fputs("Hello world\n", stdout) < 0) {
 			perror("Well... Fuck");
 		}
 		break;
 	}
 	
+	fclose(xterm);
 	return EXIT_SUCCESS;
 }

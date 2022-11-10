@@ -9,7 +9,7 @@
 
 int main(void)
 {
-	FILE *xterm = rgt__create_debug_output("good morning world!!!!");
+	FILE *const xterm = rgt__create_debug_output("Tester debug");
 	assert(xterm != NULL);
 	
 	bool success = rgt__init();
@@ -18,7 +18,7 @@ int main(void)
 	int written = fprintf(xterm, "Initiated rgt: %s.\n", success ? "true" : "false");
 	assert(written > 0);
 	
-	sleep(3); /* have xterm properly show up */
+	sleep(3); /* wait so we can see xterm */
 	
 	rgt__deinit();
 	fclose(xterm);
