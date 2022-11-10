@@ -69,7 +69,8 @@ extern bool rgt__init(void)
 	g_parent.pipe.in = childToParent[PIPE_FD_IN];
 	g_parent.pipe.out = parentToChild[PIPE_FD_OUT];
 	
-	static struct Pipe childPipe;
+	/* the variable is static so it won't go out of scope before the thread copies its data */
+	static struct Pipe childPipe = { 0 };
 	childPipe.in = parentToChild[PIPE_FD_IN];
 	childPipe.out = childToParent[PIPE_FD_OUT];
 	
@@ -94,12 +95,21 @@ extern FILE* rgt__create_debug_output(const char *title)
 		return NULL;
 	}
 	
-	const pid_t child_pid = fork();
-	if (unlikely(child_pid < 0)) {
+	const pid_t childPid = fork();
+	if (unlikely(childPid < 0)) {
 		CLOSE_FD_ARRAY(fds);
 		return NULL;
 	}
-	else if (child_pid == 0) { /* child */
+	else if (childPid > 0) { /* parent */
+		close(fds[PIPE_FD_IN]);
+		
+		FILE *const stream = fdopen(fds[PIPE_FD_OUT], "w");
+		if (stream != NULL) {
+			setvbuf(stream, NULL, _IOLBF, 0);
+		}
+		return stream;
+	}
+	else { /* child */
 		close(fds[PIPE_FD_OUT]);
 		
 		char pipeFilepath[64] = { 0 };
@@ -116,11 +126,4 @@ extern FILE* rgt__create_debug_output(const char *title)
 		);
 		abort(); /* abort the child process after xterm finishes */
 	}
-	
-	close(fds[PIPE_FD_IN]);
-	FILE *const stream = fdopen(fds[PIPE_FD_OUT], "w");
-	if (stream != NULL) {
-		setvbuf(stream, NULL, _IOLBF, 0);
-	}
-	return stream;
 }
