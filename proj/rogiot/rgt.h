@@ -1,7 +1,6 @@
 #ifndef ROGIOT__RGT_H
 #define ROGIOT__RGT_H
 
-#define _POSIX_C_SOURCE 1
 #include <stdbool.h>
 #include <stdio.h>
 
