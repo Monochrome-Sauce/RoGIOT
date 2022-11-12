@@ -9,6 +9,7 @@
 enum RgtError
 {
 	RGT__E_OK = 0,
+	RGT__E_SYSLIMIT,
 	
 	/* maintain the maximum number of errors for implementation reasons */
 	RGT__ERROR_COUNT,

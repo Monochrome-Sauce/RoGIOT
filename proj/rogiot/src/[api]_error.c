@@ -14,6 +14,8 @@ extern const char* rgt__error_name(const enum RgtError err)
 	switch (err)
 	{
 		CASE_RET(RGT__E_OK);
+		CASE_RET(RGT__E_SYSLIMIT);
+		
 		CASE_RET(RGT__ERROR_COUNT);
 	}
 	return NULL;
@@ -26,6 +28,9 @@ extern const char* rgt__error_desc(const enum RgtError err)
 	{
 	case RGT__E_OK:
 		return "Success";
+	case RGT__E_SYSLIMIT:
+		return "System limit on allocation of required resources";
+	
 	case RGT__ERROR_COUNT:
 		return "Number of existing RoGIOT error codes";
 	}

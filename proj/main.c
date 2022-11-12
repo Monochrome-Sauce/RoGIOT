@@ -19,14 +19,20 @@ int main(void)
 	int written = fprintf(xterm, "Initiated rgt: %s.\n", success ? "true" : "false");
 	assert(written > 0);
 	
-	const char *errName = rgt__error_name(RGT__E_OK);
-	const char *errDesc = rgt__error_desc(RGT__E_OK);
-	assert(errName != NULL);
-	assert(errDesc != NULL);
-	fprintf(xterm, "%s: %s.\n", errName, errDesc);
+	enum RgtError err = 0;
+	do {
+		err = rgt__error_pop();
+		const char *errName = rgt__error_name(err);
+		const char *errDesc = rgt__error_desc(err);
+		
+		assert(errName != NULL);
+		assert(errDesc != NULL);
+		fprintf(xterm, "(%d) %s: %s.\n", err, errName, errDesc);
+	} while (err != RGT__E_OK);
 	
 	
-	sleep(3); /* wait so we can see xterm */
+	
+	sleep(8); /* wait to make xterm visible to humans */
 	rgt__deinit();
 	fclose(xterm);
 	return EXIT_SUCCESS;
