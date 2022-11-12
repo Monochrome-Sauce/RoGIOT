@@ -3,6 +3,29 @@
 
 #include <stdbool.h>
 #include <stdio.h>
+#include <assert.h>
+
+
+enum RgtError
+{
+	RGT__E_NONE = 0,
+	
+	/* maintain the maximum number of errors for implementation reasons */
+	RGT__ERROR_COUNT,
+};
+static_assert(!RGT__E_NONE, "truthy RGT__E_NONE value");
+
+/* #Get error registered by the library.
+! Calling this function will return the latest error the library registered and
+delete it from the stack of errors.
+! The list of errors gets cleared and filled with new errors whenever an API call fails.
+!
+! @return: valid enum RgtError value, RGT__E_NONE when no errors are left.
+*/
+extern enum RgtError rgt__error_pop(void);
+
+
+
 
 
 /* #Initiates the library, stealing the standard streams (stdin, stdout, stderr).

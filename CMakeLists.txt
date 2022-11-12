@@ -9,6 +9,7 @@ set(LIB_TESTER test.out)
 # Static library
 set(SOURCE_LIST
 	proj/rogiot/src/[api]_rgt.c
+	proj/rogiot/src/[api]_error.c
 	proj/rogiot/src/mainloop.c
 )
 
