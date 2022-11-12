@@ -8,12 +8,12 @@
 
 enum RgtError
 {
-	RGT__E_NONE = 0,
+	RGT__E_OK = 0,
 	
 	/* maintain the maximum number of errors for implementation reasons */
 	RGT__ERROR_COUNT,
 };
-static_assert(!RGT__E_NONE, "truthy RGT__E_NONE value");
+static_assert(!RGT__E_OK, "truthy RGT__E_OK value");
 
 /* #Get error registered by the library.
 ! Calling this function will return the latest error the library registered and
@@ -23,6 +23,18 @@ delete it from the stack of errors.
 ! @return: valid enum RgtError value, RGT__E_NONE when no errors are left.
 */
 extern enum RgtError rgt__error_pop(void);
+
+/* #Get name of an RGT error.
+! @param err: valid RgtError.
+! @return: constant string which may not be modified by the caller.
+*/
+extern const char* rgt__error_name(enum RgtError err);
+
+/* #Get description of an RGT error.
+! @param err: valid RgtError.
+! @return: constant string which may not be modified by the caller.
+*/
+extern const char* rgt__error_desc(enum RgtError err);
 
 
 
