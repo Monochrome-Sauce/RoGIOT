@@ -23,7 +23,7 @@ static bool are_pipes_valid(const struct Pipe *const comms, const struct Pipe *c
 		{ .fd = term->out,  .events = POLLNVAL, },
 	};
 	
-	if (unlikely(poll(toPoll, SIZEOF_ARRAY(toPoll), 0) < 0)) {
+	if unlikely (poll(toPoll, SIZEOF_ARRAY(toPoll), 0) < 0) {
 		perror("Failed to do initial poll");
 		return false;
 	}
@@ -63,7 +63,7 @@ int mainloop(const struct Pipe comms, const struct Pipe term)
 	
 	while (true)
 	{
-		if (unlikely(poll(toPoll, SIZEOF_ARRAY(toPoll), -1) < 0)) {
+		if unlikely (poll(toPoll, SIZEOF_ARRAY(toPoll), -1) < 0) {
 			fprintf(xterm, "Failed to poll: %s", strerror(errno));
 			return EXIT_FAILURE;
 		}

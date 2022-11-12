@@ -7,8 +7,16 @@
 #define rgt_new(type) ((type*)malloc(sizeof (type)))
 #define rgt_newArray(len, type) ((type(*)[])calloc(len, sizeof (type)))
 
-#define likely(x)   __builtin_expect((x), 1)
-#define unlikely(x) __builtin_expect((x), 0)
+#define likely(x)   (__builtin_expect((x), 1))
+#define unlikely(x) (__builtin_expect((x), 0))
+/* example usage:
+if unlikely (str == NULL) {
+	...
+}
+else if likely (strcmp(str, "Bob") == 0) {
+	...
+}
+*/
 
 
 #endif /* MACROS_H */

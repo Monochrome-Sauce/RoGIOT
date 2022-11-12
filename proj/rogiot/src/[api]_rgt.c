@@ -56,12 +56,12 @@ extern bool rgt__init(void)
 	memset(&g_parent, 0, sizeof(g_parent));
 	
 	int parentToChild[2] = { 0 };
-	if (unlikely(pipe(parentToChild) < 0)) {
+	if unlikely (pipe(parentToChild) < 0) {
 		return false;
 	}
 	
 	int childToParent[2] = { 0 };
-	if (unlikely(pipe(childToParent) < 0)) {
+	if unlikely (pipe(childToParent) < 0) {
 		CLOSE_FD_ARRAY(parentToChild);
 		return false;
 	}
@@ -96,7 +96,7 @@ extern FILE* rgt__create_debug_output(const char *title)
 	}
 	
 	const pid_t childPid = fork();
-	if (unlikely(childPid < 0)) {
+	if unlikely (childPid < 0) {
 		CLOSE_FD_ARRAY(fds);
 		return NULL;
 	}
