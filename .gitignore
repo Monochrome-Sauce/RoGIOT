@@ -11,14 +11,11 @@
 *.lib
 *.dll
 
-#Editor specific files
-compile_commands.json
+#Work environment specific files
 .cache
 *.swp
 .~
 *.sublime-workspace
 
 #Build system output
-Makefile
-[Cc][Mm]ake*
-!CMakeLists.txt
+build/
