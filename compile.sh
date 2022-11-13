@@ -14,15 +14,16 @@ COMMANDS_DIR=$(mktemp -d)
 COMPILE_COMMANDS_FILE="compile_commands.json"
 
 mkdir -p ${BUILD_DIR}
-cmake ./CMakeLists.txt -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -B$BUILD_DIR
 cd $BUILD_DIR
 
+cmake ../CMakeLists.txt -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -B./
 if [ $hasCompdb ]
 then
 	mv ./$COMPILE_COMMANDS_FILE $COMMANDS_DIR/$COMPILE_COMMANDS_FILE
 	compdb -p $COMMANDS_DIR list > $COMPILE_COMMANDS_FILE
 	rm -r $COMMANDS_DIR
 fi
+
 
 make
 cd ..
