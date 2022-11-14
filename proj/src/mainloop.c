@@ -1,6 +1,6 @@
+#include "rogiot/rgt.h"
 #include "mainloop.h"
 #include "macros.h"
-#include "rogiot/rgt.h"
 
 #include <stdbool.h>
 #include <stdlib.h>

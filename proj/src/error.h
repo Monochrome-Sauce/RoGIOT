@@ -1,7 +1,7 @@
 #ifndef ERROR_H
 #define ERROR_H
 
-#include "../rgt.h"
+#include "rogiot/rgt.h"
 
 
 /* #Add an error for users of the library to see.
