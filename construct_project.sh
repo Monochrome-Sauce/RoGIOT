@@ -19,19 +19,21 @@ Usage()
 }
 
 
-BUILD_DIR='./build'
-SHOULD_COMPILE=0
 ProcessOpts()
 {
-	local failure=0
-	for i in "$@"; do
-		case ${i} in
+	BUILD_DIR='./build'
+	SHOULD_COMPILE=false
+	
+	local failure=false
+	local arg
+	for arg in "$@"; do
+		case ${arg} in
 			-h|--help)
 				Usage
 				exit 0
 				;;
 			-b=*|--build-dir=*)
-				BUILD_DIR="${i#*=}"
+				BUILD_DIR="${arg#*=}"
 				if [[ ${BUILD_DIR} = '' ]]; then
 					printf "Must provide a directory for "
 					failure=true
@@ -62,10 +64,13 @@ ProcessOpts()
 	done
 	
 	if [[ ${failure} = true ]]; then
-		printf "$(tput setaf 3)%s$(tput sgr0)\n" "${i}"
+		printf "$(tput setaf 3)%s$(tput sgr0)\n" "${arg}"
 		printf "Run '$(tput setaf 3)%s --help$(tput sgr0)' for all supported options.\n" "${0}"
 		exit 1
 	fi
+	
+	readonly SHOULD_COMPILE
+	readonly BUILD_DIR
 }
 
 
@@ -75,7 +80,9 @@ then
 	echo "Could not locate $(tput setaf 3)CMake$(tput sgr0). Aborting..."
 	exit 1
 fi
+
 HAS_COMPDB=$(command -v compdb)
+readonly HAS_COMPDB
 
 ProcessOpts "${@}"
 
