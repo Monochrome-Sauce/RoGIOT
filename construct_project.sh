@@ -1,11 +1,14 @@
 #!/bin/bash
 
+SCRIPT_NAME="$(basename "${0}")"
+readonly SCRIPT_NAME
+
 Usage()
 {
-	printf 'Bash script providing more efficient usage running CMake with Make for C++ project construction.\n'
-	printf 'The script stores the CMake files into a build directory and exports compile commands for LSP.\n'
+	printf 'Bash script to simplify CMake+Make usage for C++ project construction.\n'
+	printf 'The script stores the CMake files into a build directory and exports compile commands for the clangd LSP.\n'
 	printf '\nUsage:\n'
-	printf '\tbash %s [options]\n' "${0}"
+	printf "\tbash $(tput setaf 2)%s$(tput sgr0) [options]\n" "${SCRIPT_NAME}"
 	
 	PrintOption()
 	{
@@ -15,7 +18,13 @@ Usage()
 	printf '\nOptions:\n'
 	PrintOption '-h|--help' 'Print usage information and exit.'
 	PrintOption '-b|--build=<path/to/build/folder>' 'Choose a different build directory.'
-	PrintOption '-c|--compile' 'Compile the project by calling Make.'
+	PrintOption '-c|--compile' "Compile the project by calling $(tput setaf 3)Make$(tput sgr0)."
+	
+	printf "\nTo avoid using $(tput setaf 3)%s$(tput sgr0) before every call, make the script executable.\n" "bash"
+	printf 'Add execution permission:\n'
+	printf "\t$(tput setaf 3)chmod +x $(tput setaf 2)%s$(tput sgr0)\n" "${SCRIPT_NAME}"
+	printf 'Remove execution permission:\n'
+	printf "\t$(tput setaf 3)chmod -x $(tput setaf 2)%s$(tput sgr0)\n" "${SCRIPT_NAME}"
 }
 
 
@@ -65,7 +74,7 @@ ProcessOpts()
 	
 	if [[ ${failure} = true ]]; then
 		printf "$(tput setaf 3)%s$(tput sgr0)\n" "${arg}"
-		printf "Run '$(tput setaf 3)%s --help$(tput sgr0)' for all supported options.\n" "${0}"
+		printf "Run '$(tput setaf 2)%s$(tput sgr0) --help' for all supported options.\n" "${SCRIPT_NAME}"
 		exit 1
 	fi
 	
@@ -75,29 +84,24 @@ ProcessOpts()
 
 
 
-if [[ ! $(command -v cmake) ]]
-then
+if [[ ! $(command -v cmake) ]]; then
 	echo "Could not locate $(tput setaf 3)CMake$(tput sgr0). Aborting..."
 	exit 1
 fi
 
-HAS_COMPDB=$(command -v compdb)
-readonly HAS_COMPDB
-
 ProcessOpts "${@}"
 
 
-COMP_COMMS_DIR=$(mktemp -d)
-COMP_COMMS_FILE="compile_commands.json"
-
 mkdir -p "${BUILD_DIR}"
 cd "${BUILD_DIR}" || exit 1
-
 cmake ../CMakeLists.txt -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -B./
+
+HAS_COMPDB=$(command -v compdb); readonly HAS_COMPDB
 if [[ ${HAS_COMPDB} ]]; then
-	mv "./${COMP_COMMS_FILE}" "${COMP_COMMS_DIR}/${COMP_COMMS_FILE}"
-	compdb -p "${COMP_COMMS_DIR}" list > "${COMP_COMMS_FILE}"
-	rm -r "${COMP_COMMS_DIR}"
+	TMP_DIR=$(mktemp -d)
+	mv "./compile_commands.json" "${TMP_DIR}/compile_commands.json"
+	compdb -p "${TMP_DIR}" list > "compile_commands.json"
+	rm -r "${TMP_DIR}"
 fi
 
 if [[ ${SHOULD_COMPILE} = true ]]; then
