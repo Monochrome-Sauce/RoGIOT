@@ -1,6 +1,6 @@
 #define _POSIX_C_SOURCE 1
 #include "rogiot/rgt.h"
-#include "mainloop.h"
+#include "Pipe.h"
 #include "macros.h"
 
 #include <stdlib.h>
@@ -38,6 +38,13 @@ static void inner__close_fds(const size_t len, int fds[len])
 }
 
 #define CLOSE_FD_ARRAY(fds) inner__close_fds(SIZEOF_ARRAY(fds), fds)
+
+
+/* #the child's threads and library's main.
+! @param comms: Bi-directional pipe to communicate with the calling thread.
+! @param term: Bi-directional pipe to communicate with the terminal.
+*/
+extern int mainloop(const struct Pipe comms, const struct Pipe term);
 
 static int start_mainloop(void *data)
 {
