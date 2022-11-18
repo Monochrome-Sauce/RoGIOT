@@ -17,14 +17,14 @@ Usage()
 	
 	printf '\nOptions:\n'
 	PrintOption '-h|--help' 'Print usage information and exit.'
-	PrintOption '-b|--build=<path/to/build/folder>' 'Choose a different build directory.'
+	PrintOption "-b|--build=<$(tput setaf 2)path/to/build/folder$(tput sgr0)>" 'Choose a different build directory.'
 	PrintOption '-c|--compile' "Compile the project by calling $(tput setaf 3)Make$(tput sgr0)."
 	
 	printf "\nTo avoid using $(tput setaf 3)%s$(tput sgr0) before every call, make the script executable.\n" "bash"
-	printf 'Add execution permission:\n'
-	printf "\t$(tput setaf 3)chmod +x $(tput setaf 2)%s$(tput sgr0)\n" "${SCRIPT_NAME}"
-	printf 'Remove execution permission:\n'
-	printf "\t$(tput setaf 3)chmod -x $(tput setaf 2)%s$(tput sgr0)\n" "${SCRIPT_NAME}"
+	printf '\tAdd execution permission:\n'
+	printf "\t\t$(tput setaf 3)chmod +x $(tput setaf 2)%s$(tput sgr0)\n" "${SCRIPT_NAME}"
+	printf '\tRemove execution permission:\n'
+	printf "\t\t$(tput setaf 3)chmod -x $(tput setaf 2)%s$(tput sgr0)\n" "${SCRIPT_NAME}"
 }
 
 
@@ -50,16 +50,17 @@ ProcessOpts()
 				fi
 				shift # past argument=value
 				;;
+			-c|--compile)
+				SHOULD_COMPILE=true
+				shift # past argument
+				;;
+			
 			-b|--build)
 				printf "Must provide a directory for "
 				failure=true
 				break
 				;;
-			-c|--compile)
-				SHOULD_COMPILE=true
-				shift # past argument
-				;;
-			-c=*|--compile=*)
+			-c=*|--compile=*|-h=*|--help=*)
 				printf "Arguments may not be passed for "
 				failure=true
 				break
@@ -94,7 +95,7 @@ ProcessOpts "${@}"
 
 mkdir -p "${BUILD_DIR}"
 cd "${BUILD_DIR}" || exit 1
-cmake ../CMakeLists.txt -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -B./
+cmake ../CMakeLists.txt -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -B./ || exit 1
 
 HAS_COMPDB=$(command -v compdb); readonly HAS_COMPDB
 if [[ ${HAS_COMPDB} ]]; then
@@ -105,13 +106,13 @@ if [[ ${HAS_COMPDB} ]]; then
 fi
 
 if [[ ${SHOULD_COMPILE} = true ]]; then
-	make
+	make || exit 1
 fi
 
 
 printf '\nBuild files location:\n'
-printf ">>> $(tput setaf 3)%s$(tput sgr0)\n" "$(pwd)"
+printf ">>> $(tput setaf 2)%s$(tput sgr0)\n" "$(pwd)"
 
 if [[ ! ${HAS_COMPDB} ]]; then
-	printf "Note: failed to create $(tput setaf 3)%s$(tput sgr0) - $(tput setaf 1)compdb$(tput sgr0) was not found.\n" "${COMP_COMMS_FILE}"
+	printf "Note: failed to create $(tput setaf 2)%s$(tput sgr0) - $(tput setaf 3)compdb$(tput sgr0) was not found.\n" 'compile_commands.json'
 fi
