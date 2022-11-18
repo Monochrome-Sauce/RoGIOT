@@ -7,7 +7,6 @@ set(LIB_OUTPUT rogiot)
 set(SOURCE_LIST
 	proj/src/[api]_rgt.c
 	proj/src/[api]_error.c
-	proj/src/mainloop.c
 )
 
 add_library(${LIB_OUTPUT} STATIC ${SOURCE_LIST})

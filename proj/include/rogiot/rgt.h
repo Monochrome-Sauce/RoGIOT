@@ -41,18 +41,20 @@ extern const char* rgt__error_desc(enum RgtError err);
 
 
 
-/* #Initiates the library, stealing the standard streams (stdin, stdout, stderr).
-! The standard streams are still usable, but for the library to work properly
-please refrain from utilizing them and refer to rgt::create_debug_output() for
-creating a debug-output console.
+/* #Initiates the library, modifying the default terminal.
+! The standard streams (stdout, stdin, stderr) are still usable, but for the library
+to work properly please refrain from utilizing them and refer to rgt::create_debug_output()
+for creating a debug-output console.
 !
-! Must be called only once.
+! @return: false if initialization failed, otherwise true. If false was returned, it's
+most likely to keep being returned.
+!
+! Must be called before any use of the terminal.
 */
 extern bool rgt__init(void);
 
 /* #Clears the resources used by the library.
-! The call may take time to finish, in the case where it has to wait for a
-thread/process to finish.
+! The terminal is restored to its original state.
 !
 ! Must be called after rgt::init().
 */

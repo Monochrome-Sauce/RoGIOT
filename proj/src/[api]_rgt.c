@@ -8,25 +8,12 @@
 #include <threads.h>
 
 #include <sys/types.h>
+#include <termios.h>
 #include <unistd.h>
 
 
-static struct
-{
-	thrd_t childThread;
-	struct Pipe pipe;
-} g_parent;
-
-
-static void inner__close_pipe(struct Pipe *pipe)
-{
-	close(pipe->in);
-	pipe->in = -1;
-	
-	close(pipe->out);
-	pipe->out = -1;
-}
-
+static struct termios g_originalTerminalState;
+static bool g_rgtInitiated = false;
 
 static void inner__close_fds(const size_t len, int fds[len])
 {
@@ -37,62 +24,35 @@ static void inner__close_fds(const size_t len, int fds[len])
 	}
 }
 
-#define CLOSE_FD_ARRAY(fds) inner__close_fds(SIZEOF_ARRAY(fds), fds)
-
-
-/* #the child's threads and library's main.
-! @param comms: Bi-directional pipe to communicate with the calling thread.
-! @param term: Bi-directional pipe to communicate with the terminal.
-*/
-extern int mainloop(const struct Pipe comms, const struct Pipe term);
-
-static int start_mainloop(void *data)
-{
-	struct Pipe *comms = data;
-	struct Pipe term = {
-		.in = STDIN_FILENO,
-		.out = STDOUT_FILENO,
-	};
-	return mainloop(*comms, term);
-}
-
-
 
 extern bool rgt__init(void)
 {
-	memset(&g_parent, 0, sizeof(g_parent));
+	if (g_rgtInitiated) {
+		return false;
+	}
+	g_rgtInitiated = true;
 	
-	int parentToChild[2] = { 0 };
-	if unlikely (pipe(parentToChild) < 0) {
+	
+	if (tcgetattr(STDIN_FILENO, &g_originalTerminalState) < 0) {
 		return false;
 	}
 	
-	int childToParent[2] = { 0 };
-	if unlikely (pipe(childToParent) < 0) {
-		CLOSE_FD_ARRAY(parentToChild);
-		return false;
-	}
+	struct termios terminal = g_originalTerminalState;
+	terminal.c_lflag &= ~(unsigned)(ECHO | ICANON);
+	tcsetattr(STDIN_FILENO, TCSANOW, &terminal);
 	
-	g_parent.pipe.in = childToParent[PIPE_FD_IN];
-	g_parent.pipe.out = parentToChild[PIPE_FD_OUT];
-	
-	/* the variable is static so it won't go out of scope before the thread copies its data */
-	static struct Pipe childPipe = { 0 };
-	childPipe.in = parentToChild[PIPE_FD_IN];
-	childPipe.out = childToParent[PIPE_FD_OUT];
-	
-	const int res = thrd_create(&g_parent.childThread, start_mainloop, &childPipe);
-	return res == 0;
+	struct termios result;
+	return tcgetattr(STDIN_FILENO, &result) == 0 && terminal.c_lflag == result.c_lflag;
 }
 
 extern void rgt__deinit(void)
 {
-	/* child process: inform it to finish */
-	const ssize_t res = write(g_parent.pipe.out, "Q", 1);
-	printf("write: %zd\n", res);
+	if (!g_rgtInitiated) {
+		return;
+	}
+	g_rgtInitiated = false;
 	
-	thrd_join(g_parent.childThread, NULL);
-	inner__close_pipe(&g_parent.pipe);
+	tcsetattr(STDIN_FILENO, TCSANOW, &g_originalTerminalState);
 }
 
 extern FILE* rgt__create_debug_output(const char *title)
@@ -104,7 +64,7 @@ extern FILE* rgt__create_debug_output(const char *title)
 	
 	const pid_t childPid = fork();
 	if unlikely (childPid < 0) {
-		CLOSE_FD_ARRAY(fds);
+		inner__close_fds(SIZEOF_ARRAY(fds), fds);
 		return NULL;
 	}
 	else if (childPid > 0) { /* parent */
@@ -128,7 +88,7 @@ extern FILE* rgt__create_debug_output(const char *title)
 		
 		execlp("xterm", "xterm",
 		       "-title", title,
-		       "-e", "cat", pipeFilepath,
+		       "-e", "cat", pipeFilepath, "--number",
 		       (char*)NULL
 		);
 		abort(); /* abort the child process after xterm finishes */
