@@ -17,9 +17,9 @@ enum RgtError
 static_assert(!RGT__E_OK, "truthy RGT__E_OK value");
 
 /* #Get error registered by the library.
-! Calling this function will return the latest error the library registered and
-delete it from the stack of errors.
-! The list of errors gets cleared and filled with new errors whenever an API call fails.
+! Calling this function will return the latest error the library registered and delete
+it from the stack of errors.
+! The list of errors may get cleared and filled with new errors with each API call.
 !
 ! @return: valid enum RgtError value, RGT__E_NONE when no errors are left.
 */

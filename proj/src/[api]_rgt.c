@@ -2,6 +2,7 @@
 #include "rogiot/rgt.h"
 #include "Pipe.h"
 #include "macros.h"
+#include "error.h"
 
 #include <stdlib.h>
 #include <memory.h>
@@ -33,13 +34,15 @@ extern bool rgt__init(void)
 	g_rgtInitiated = true;
 	
 	
-	if (tcgetattr(STDIN_FILENO, &g_originalTerminalState) < 0) {
+	if unlikely (tcgetattr(STDIN_FILENO, &g_originalTerminalState) < 0) {
 		return false;
 	}
 	
 	struct termios terminal = g_originalTerminalState;
 	terminal.c_lflag &= ~(unsigned)(ECHO | ICANON);
-	tcsetattr(STDIN_FILENO, TCSANOW, &terminal);
+	if unlikely (tcsetattr(STDIN_FILENO, TCSANOW, &terminal) < 0) {
+		return false;
+	}
 	
 	struct termios result;
 	return tcgetattr(STDIN_FILENO, &result) == 0 && terminal.c_lflag == result.c_lflag;
@@ -58,13 +61,16 @@ extern void rgt__deinit(void)
 extern FILE* rgt__create_debug_output(const char *title)
 {
 	int fds[2] = { 0 };
-	if(pipe(fds) == -1) {
+	if unlikely (pipe(fds) == -1) {
 		return NULL;
 	}
 	
 	const pid_t childPid = fork();
 	if unlikely (childPid < 0) {
 		inner__close_fds(SIZEOF_ARRAY(fds), fds);
+		
+		rgt__error_clear_all();
+		rgt__error_push(RGT__E_SYSLIMIT);
 		return NULL;
 	}
 	else if (childPid > 0) { /* parent */
