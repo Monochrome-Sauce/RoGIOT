@@ -5,14 +5,15 @@ cmake_minimum_required(VERSION 3.20)
 # Static library
 set(LIB_OUTPUT rogiot)
 set(SOURCE_LIST
-	proj/src/[api]_rgt.c
-	proj/src/[api]_error.c
+	proj/src/api_impl/rgt.c
+	proj/src/api_impl/error_report.c
 )
 
 add_library(${LIB_OUTPUT} STATIC ${SOURCE_LIST})
 
 target_include_directories(${LIB_OUTPUT}
 	PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/proj/include/
+	PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/proj/
 )
 
 target_link_libraries(${LIB_OUTPUT}

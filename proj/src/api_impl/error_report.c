@@ -1,5 +1,4 @@
-#include "rogiot/rgt.h"
-#include "error.h"
+#include "../error_report.h"
 
 
 static enum RgtError errorStack[RGT__ERROR_COUNT] = { RGT__E_OK };

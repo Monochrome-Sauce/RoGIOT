@@ -1,8 +1,8 @@
 #define _POSIX_C_SOURCE 1
 #include "rogiot/rgt.h"
-#include "Pipe.h"
-#include "macros.h"
-#include "error.h"
+#include "src/Pipe.h"
+#include "src/macros.h"
+#include "src/error_report.h"
 
 #include <stdlib.h>
 #include <memory.h>
