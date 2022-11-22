@@ -1,6 +1,5 @@
-#ifndef ERROR_H
-#define ERROR_H
-
+#ifndef ERROR_REPORT_H
+#define ERROR_REPORT_H
 #include "rogiot/rgt.h"
 
 
@@ -15,4 +14,4 @@ extern void rgt__error_push(enum RgtError err);
 extern void rgt__error_clear_all(void);
 
 
-#endif /* ERROR_H */
+#endif /* ERROR_REPORT_H */
