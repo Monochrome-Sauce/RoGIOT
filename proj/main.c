@@ -3,41 +3,30 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-#include <assert.h>
-#include <string.h>
-#include <signal.h>
-
-#include <unistd.h>
 
 
 int main(void)
 {
-	pid_t child = 0;
-	FILE *const xterm = rgt__create_xterm(&child, "Tester debug");
-	assert(xterm != NULL);
+	RgtWindow *window = rgt__init();
+	assert(window != NULL);
 	
-	bool success = rgt__init();
-	assert(success);
-	
-	int written = fprintf(xterm, "Initiated rgt: %s.\n", success ? "true" : "false");
-	assert(written > 0);
+	fprintf(stderr, "Initiated rgt: %s.\n", window != NULL ? "true" : "false");
 	
 	enum RgtError err = 0;
 	do {
 		err = rgt__error_pop();
-		const char *errName = rgt__error_name(err);
-		const char *errDesc = rgt__error_desc(err);
+		const char *const errName = rgt__error_name(err);
+		const char *const errDesc = rgt__error_desc(err);
 		
 		assert(errName != NULL);
 		assert(errDesc != NULL);
-		fprintf(xterm, "\r(%d) %s: %s.\n", err, errName, errDesc);
+		fprintf(stderr, "\r(%d) %s: %s.\n", err, errName, errDesc);
 	} while (err != RGT__E_OK);
 	
-	fputs("Press <ENTER> to exit... ", xterm);
-	getc(xterm);
+	fputs("\nPress <ENTER> to exit... ", stderr);
+	getc(stdin);
 	
 	
-	rgt__deinit();
-	fclose(xterm);
+	rgt__deinit(window);
 	return EXIT_SUCCESS;
 }

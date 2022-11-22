@@ -1,16 +1,14 @@
 #define _XOPEN_SOURCE
 #define _XOPEN_SOURCE_EXTENDED
-#include "rogiot/rgt.h"
+#include "src/window/create_xterm.h"
 #include "src/macros.h"
-#include "src/error_report.h"
-#include "src/Pipe.h"
 
-#include <stdlib.h>   // pid_t, grantpt(), unlockpt(), ptsname(), abort()
-#include <stdio.h>    // FILE*, fdopen(), *printf(), perror()
-#include <limits.h>   // PATH_MAX
+#include <stdlib.h>    // pid_t, grantpt(), unlockpt(), ptsname(), abort()
+#include <stdio.h>     // FILE*, fdopen(), perror()
+#include <limits.h>    // PATH_MAX
 
-#include <unistd.h>   // fork(), close(), execlp()
-#include <fcntl.h>    // open()
+#include <unistd.h>    // pid_t, fork(), close(), execlp()
+#include <fcntl.h>     // pid_t, open()
 
 
 static int create_pt_master(void)
@@ -52,7 +50,8 @@ static void inner__clear_xterm(FILE *const xterm)
 	fflush(xterm);
 }
 
-extern FILE* rgt__create_xterm(pid_t *const childPid, const char *const title)
+
+extern FILE* create_xterm(pid_t *const childPid, const char *const title)
 {
 	const int fdMaster = create_pt_master();
 	

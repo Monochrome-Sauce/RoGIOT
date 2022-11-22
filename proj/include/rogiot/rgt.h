@@ -1,11 +1,9 @@
+
 #ifndef ROGIOT__RGT_H
 #define ROGIOT__RGT_H
 
 #include <stdbool.h>
-#include <stdio.h>
 #include <assert.h>
-
-#include <sys/types.h>
 
 
 enum RgtError
@@ -43,34 +41,17 @@ extern const char* rgt__error_desc(enum RgtError err);
 
 
 
-/* #Initiates the library, modifying the default terminal.
-! The standard streams (stdout, stdin, stderr) are still usable, but for the library
-to work properly please refrain from utilizing them and refer to rgt::create_debug_output()
-for creating a debug-output console.
-!
-! @return: false if initialization failed, otherwise true. If false was returned, it's
-most likely to keep being returned.
-!
-! Must be called before any use of the terminal.
-*/
-extern bool rgt__init(void);
+typedef struct RgtWindow RgtWindow;
 
-/* #Clears the resources used by the library.
-! The terminal is restored to its original state.
-!
-! Must be called after rgt::init().
+/* #Initiate the library, creating a new terminal window.
+! @return: NULL if initialization failed, otherwise an RgtWindow object.
 */
-extern void rgt__deinit(void);
+extern RgtWindow* rgt__init(void);
 
-
-/* #Creates an input-output xterm terminal.
-! To close the created terminal, just call fclose() on the returned stream.
-! This will not work unless your system has xterm in the PATH variables.
-!
-! @param title: C-string title for the created console. NULL will utilize a default title.
-! @return: FILE* stream with both read and write permissions.
+/* #Clears the resources used by a created RgtWindow object.
+! @window: result of an rgt::init() call. Must NOT be NULL.
 */
-extern FILE* rgt__create_xterm(pid_t *const childPid, const char *title);
+extern void rgt__deinit(RgtWindow *window);
 
 
 #endif /* ROGIOT__RGT_H */
