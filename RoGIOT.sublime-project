@@ -1,8 +1,17 @@
 {
-	"folders":
-	[
+	"folders": [
 		{
-			"path": "."
-		}
-	]
+			"path": ".",
+		},
+	],
+	"debugger_configurations": [
+		{
+			"type": "gdb",
+			"request": "launch",
+			"name": "Launch Program",
+			"target": "build/test.out",
+			"cwd": "${folder}",
+			"valuesFormatting": "parseText",
+		},
+	],
 }
