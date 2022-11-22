@@ -5,6 +5,8 @@
 #include <stdio.h>
 #include <assert.h>
 
+#include <sys/types.h>
+
 
 enum RgtError
 {
@@ -61,14 +63,14 @@ extern bool rgt__init(void);
 extern void rgt__deinit(void);
 
 
-/* #Creates an xterm terminal with write permissions only.
+/* #Creates an input-output xterm terminal.
 ! To close the created terminal, just call fclose() on the returned stream.
 ! This will not work unless your system has xterm in the PATH variables.
 !
-! @param title: C-string title for the created console. Pass NULL for a default title.
-! @return: Line-buffered write-only FILE* stream.
+! @param title: C-string title for the created console. NULL will utilize a default title.
+! @return: FILE* stream with both read and write permissions.
 */
-extern FILE* rgt__create_debug_output(const char *title);
+extern FILE* rgt__create_xterm(pid_t *const childPid, const char *title);
 
 
 #endif /* ROGIOT__RGT_H */

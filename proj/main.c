@@ -1,16 +1,19 @@
+#define _POSIX_C_SOURCE 1
 #include "rogiot/rgt.h"
 
 #include <stdlib.h>
 #include <stdio.h>
 #include <assert.h>
 #include <string.h>
+#include <signal.h>
 
 #include <unistd.h>
 
 
 int main(void)
 {
-	FILE *const xterm = rgt__create_debug_output("Tester debug");
+	pid_t child = 0;
+	FILE *const xterm = rgt__create_xterm(&child, "Tester debug");
 	assert(xterm != NULL);
 	
 	bool success = rgt__init();
@@ -27,12 +30,13 @@ int main(void)
 		
 		assert(errName != NULL);
 		assert(errDesc != NULL);
-		fprintf(xterm, "(%d) %s: %s.\n", err, errName, errDesc);
+		fprintf(xterm, "\r(%d) %s: %s.\n", err, errName, errDesc);
 	} while (err != RGT__E_OK);
 	
+	fputs("Press <ENTER> to exit... ", xterm);
+	getc(xterm);
 	
 	
-	sleep(8); /* wait to make xterm visible to humans */
 	rgt__deinit();
 	fclose(xterm);
 	return EXIT_SUCCESS;
