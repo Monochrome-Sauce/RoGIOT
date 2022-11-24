@@ -1,39 +1,34 @@
+#define _POSIX_C_SOURCE 1
 #include "rogiot/rgt.h"
 
 #include <stdlib.h>
 #include <stdio.h>
-#include <assert.h>
-#include <string.h>
-
-#include <unistd.h>
+#include <locale.h>
 
 
 int main(void)
 {
-	FILE *const xterm = rgt__create_debug_output("Tester debug");
-	assert(xterm != NULL);
+	setlocale(LC_ALL, "en_US.UTF-8");
+	RgtWindow *window = rgt__init(800, 600);
+	assert(window != NULL);
 	
-	bool success = rgt__init();
-	assert(success);
-	
-	int written = fprintf(xterm, "Initiated rgt: %s.\n", success ? "true" : "false");
-	assert(written > 0);
+	fprintf(stderr, "Initiated rgt: %s.\n", window != NULL ? "true" : "false");
 	
 	enum RgtError err = 0;
 	do {
 		err = rgt__error_pop();
-		const char *errName = rgt__error_name(err);
-		const char *errDesc = rgt__error_desc(err);
+		const char *const errName = rgt__error_name(err);
+		const char *const errDesc = rgt__error_desc(err);
 		
 		assert(errName != NULL);
 		assert(errDesc != NULL);
-		fprintf(xterm, "(%d) %s: %s.\n", err, errName, errDesc);
+		fprintf(stderr, "\r(%d) %s: %s.\n", err, errName, errDesc);
 	} while (err != RGT__E_OK);
 	
+	fputs("\nPress <ENTER> to exit... ", stderr);
+	getc(stdin);
 	
 	
-	sleep(8); /* wait to make xterm visible to humans */
-	rgt__deinit();
-	fclose(xterm);
+	rgt__deinit(window);
 	return EXIT_SUCCESS;
 }

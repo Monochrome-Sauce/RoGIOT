@@ -1,5 +1,6 @@
-#include "../rgt.h"
-#include "error.h"
+#include "../error_report.h"
+
+#include <stddef.h>
 
 
 static enum RgtError errorStack[RGT__ERROR_COUNT] = { RGT__E_OK };
