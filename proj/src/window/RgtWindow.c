@@ -7,12 +7,21 @@
 #include <stdlib.h>
 
 
-RgtWindow* RgtWindow__create(const char *const title, const int width, const int height)
+RgtWindow* RgtWindow__create(const char *const title, int width, int height)
 {
+	assert(width > 0 && height > 0);
+	
+	if unlikely (width < XTERM_FONT_W) {
+		width = XTERM_FONT_W;
+	}
+	if unlikely (height < XTERM_FONT_H) {
+		height = XTERM_FONT_H;
+	}
+	
 	RgtWindow *window = rgt_new(RgtWindow);
-	if (window != NULL) {
-		const int cols = RgtWindow__xpixels_to_col(width + XTERM_FONT_W);
-		const int rows = RgtWindow__ypixels_to_row(height + XTERM_FONT_H);
+	if likely (window != NULL) {
+		const int cols = RgtWindow__xpixels_to_col(width);
+		const int rows = RgtWindow__ypixels_to_row(height);
 		window->terminal = create_xterm(&window->child, title, cols, rows);
 		
 		if (window->terminal == NULL) {

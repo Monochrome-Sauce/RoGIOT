@@ -7,7 +7,7 @@
 
 int main(void)
 {
-	RgtWindow *window = rgt__init(400, 400);
+	RgtWindow *window = rgt__init(800, 600);
 	assert(window != NULL);
 	
 	fprintf(stderr, "Initiated rgt: %s.\n", window != NULL ? "true" : "false");
