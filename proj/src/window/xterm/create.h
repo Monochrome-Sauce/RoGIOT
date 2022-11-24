@@ -1,5 +1,5 @@
-#ifndef WINDOW__CREATE_XTERM_H
-#define WINDOW__CREATE_XTERM_H
+#ifndef WINDOW__XTERM__CREATE_H
+#define WINDOW__XTERM__CREATE_H
 
 #include <sys/types.h>
 #include <stdio.h>
@@ -25,4 +25,4 @@
 FILE* create_xterm(pid_t *childPid, const char *title, int columns, int rows);
 
 
-#endif /* WINDOW__CREATE_XTERM_H */
+#endif /* WINDOW__XTERM__CREATE_H */

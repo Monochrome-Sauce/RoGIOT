@@ -8,8 +8,8 @@ set(SOURCE_LIST
 	proj/src/api_impl/error_report.c
 	proj/src/api_impl/rgt.c
 	
-	proj/src/window/create_xterm.c
 	proj/src/window/RgtWindow.c
+	proj/src/window/xterm/create.c
 )
 
 add_library(${LIB_OUTPUT} STATIC ${SOURCE_LIST})

@@ -1,6 +1,6 @@
 #define _POSIX_C_SOURCE 1
 #include "./RgtWindow.h"
-#include "src/window/create_xterm.h"
+#include "src/window/xterm.h"
 #include "src/macros.h"
 
 #include <math.h>
