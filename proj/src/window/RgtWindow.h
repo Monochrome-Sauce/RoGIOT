@@ -1,5 +1,5 @@
-#ifndef RGT_WINDOW_H
-#define RGT_WINDOW_H
+#ifndef WINDOW__RGT_WINDOW_H
+#define WINDOW__RGT_WINDOW_H
 #include "rogiot/rgt.h"
 
 #include <stdlib.h>
@@ -27,4 +27,4 @@ RgtWindow* RgtWindow__create(const char *title);
 void RgtWindow__destroy(RgtWindow *window);
 
 
-#endif /* RGT_WINDOW_H */
+#endif /* WINDOW__RGT_WINDOW_H */

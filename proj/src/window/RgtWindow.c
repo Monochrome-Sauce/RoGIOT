@@ -1,4 +1,4 @@
-#include "../RgtWindow.h"
+#include "./RgtWindow.h"
 #include "src/window/create_xterm.h"
 #include "src/macros.h"
 

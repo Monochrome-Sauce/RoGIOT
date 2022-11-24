@@ -1,6 +1,6 @@
 #define _XOPEN_SOURCE
 #define _XOPEN_SOURCE_EXTENDED
-#include "src/window/create_xterm.h"
+#include "./create_xterm.h"
 #include "src/macros.h"
 
 #include <stdlib.h>    // pid_t, grantpt(), unlockpt(), ptsname(), abort()
