@@ -98,7 +98,7 @@ FILE* create_xterm(pid_t *const childPid, const char *const title, const int col
 		       "-font", xtermOption_font,
 		       "-geom", xtermOption_geometry,
 		       "-title", title == NULL ? "xterm" : title,
-		       "+fullscreen", "+hold", "+j",
+		       "+fullscreen", "+hold", "+j", "-aw",
 		       (char*)NULL);
 		close(fdMaster);
 		abort(); /* abort the child process after xterm ends */
