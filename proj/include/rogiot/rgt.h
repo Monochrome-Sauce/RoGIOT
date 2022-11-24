@@ -44,9 +44,11 @@ extern const char* rgt__error_desc(enum RgtError err);
 typedef struct RgtWindow RgtWindow;
 
 /* #Initiate the library, creating a new terminal window.
+! @param width: initial width (in pixels) of the created window; must be positive.
+! @param height: initial height (in pixels) of the created window; must be positive.
 ! @return: NULL if initialization failed, otherwise an RgtWindow object.
 */
-extern RgtWindow* rgt__init(void);
+extern RgtWindow* rgt__init(int width, int height);
 
 /* #Clears the resources used by a created RgtWindow object.
 ! @window: result of an rgt::init() call. Must NOT be NULL.

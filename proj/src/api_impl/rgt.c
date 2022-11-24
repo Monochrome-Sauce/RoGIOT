@@ -35,9 +35,10 @@ static bool inner__try_modify_terminal(const int fdTerm)
 	return tcgetattr(fdTerm, &newState) == 0 && inner__termios_eq(&termState, &newState);
 }
 
-extern RgtWindow* rgt__init(void)
+extern RgtWindow* rgt__init(const int width, const int height)
 {
-	RgtWindow *wnd = RgtWindow__create("Rgt window", 800, 600);
+	assert(width > 0 && height > 0);
+	RgtWindow *wnd = RgtWindow__create("Rgt window", width, height);
 	if unlikely (wnd == NULL) {
 		return NULL;
 	}
