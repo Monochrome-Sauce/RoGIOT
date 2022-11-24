@@ -11,26 +11,20 @@
 #include <fcntl.h>     // pid_t, open()
 
 
-static int create_pt_master(void)
+static int inner__create_pt_master(void)
 {
 	const int fdMaster = open("/dev/ptmx", O_RDWR | O_NOCTTY);
-	if (fdMaster >= 0) {
-		if (grantpt(fdMaster) < 0) {
-			perror("grantpt()");
+	if likely (fdMaster >= 0) {
+		if unlikely (grantpt(fdMaster) < 0) {
 			close(fdMaster);
 			return -1;
 		}
 		
-		if (unlockpt(fdMaster) < 0) {
-			perror("unlockpt()");
+		if unlikely (unlockpt(fdMaster) < 0) {
 			close(fdMaster);
 			return -1;
 		}
 	}
-	else {
-		perror("open(/dev/ptmx, ...)");
-	}
-	
 	return fdMaster;
 }
 
@@ -53,7 +47,7 @@ static void inner__clear_xterm(FILE *const xterm)
 
 extern FILE* create_xterm(pid_t *const childPid, const char *const title)
 {
-	const int fdMaster = create_pt_master();
+	const int fdMaster = inner__create_pt_master();
 	
 	const char *const slaveName = ptsname(fdMaster);
 	if unlikely (slaveName == NULL) {
