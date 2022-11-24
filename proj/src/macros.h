@@ -6,6 +6,9 @@
 
 #define CAN_INDEX(index, arrLen) (0 <= (index) && (index) < (arrLen))
 
+#define TOKSTR__(x) #x
+#define TOKSTR(x) TOKSTR__(x)
+
 #define rgt_new(type) ((type*)malloc(sizeof (type)))
 #define rgt_newarr(len, type) ((type(*)[])calloc(len, sizeof (type)))
 #define rgt_free(p) do { free(p); p = NULL; } while (0)

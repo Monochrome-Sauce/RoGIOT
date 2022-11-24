@@ -6,6 +6,7 @@
 #include <stdlib.h>    // pid_t, grantpt(), unlockpt(), ptsname(), abort()
 #include <stdio.h>     // FILE*, fdopen(), perror()
 #include <limits.h>    // PATH_MAX
+#include <assert.h>
 
 #include <unistd.h>    // pid_t, fork(), close(), execlp()
 #include <fcntl.h>     // pid_t, open()
@@ -30,7 +31,7 @@ static int inner__create_pt_master(void)
 
 /* #Clear the STDIN and STDOUT of a newly created xterm terminal.
 ! Reason: some weird number (ending with a newline) is always being left in the
-input and output of the terminal
+input and output of the terminal.
 */
 static void inner__clear_xterm(FILE *const xterm)
 {
@@ -45,8 +46,11 @@ static void inner__clear_xterm(FILE *const xterm)
 }
 
 
-extern FILE* create_xterm(pid_t *const childPid, const char *const title)
+FILE* create_xterm(pid_t *const childPid, const char *const title, const int columns, const int rows)
 {
+	assert(childPid != NULL);
+	assert(columns > 0 && rows > 0);
+	
 	const int fdMaster = inner__create_pt_master();
 	
 	const char *const slaveName = ptsname(fdMaster);
@@ -77,11 +81,24 @@ extern FILE* create_xterm(pid_t *const childPid, const char *const title)
 	else { /* child */
 		close(fdSlave);
 		
-		char xtermOption_Sccn[PATH_MAX] = { 0 };
-		snprintf(xtermOption_Sccn, sizeof (xtermOption_Sccn), "-S%s/%d", slaveName, fdMaster);
+		char xtermOption_Sccn[PATH_MAX];
+		snprintf(xtermOption_Sccn, sizeof (xtermOption_Sccn),
+		         "-S%s/%d", slaveName, fdMaster);
+		
+		char xtermOption_font[sizeof (TOKSTR(XTERM_FONT_W) "x" TOKSTR(XTERM_FONT_H))];
+		snprintf(xtermOption_font, sizeof (xtermOption_font),
+		         "%dx%d", XTERM_FONT_W, XTERM_FONT_H);
+		
+		char xtermOption_geometry[32];
+		snprintf(xtermOption_geometry, sizeof (xtermOption_geometry),
+		         "%dx%d", columns, rows);
 		
 		execlp("xterm", "xterm", xtermOption_Sccn,
+		       "-name", "rogiot",
+		       "-font", xtermOption_font,
+		       "-geom", xtermOption_geometry,
 		       "-title", title == NULL ? "xterm" : title,
+		       "+fullscreen", "+hold", "+j",
 		       (char*)NULL);
 		close(fdMaster);
 		abort(); /* abort the child process after xterm ends */

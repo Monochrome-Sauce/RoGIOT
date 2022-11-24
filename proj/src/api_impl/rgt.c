@@ -3,7 +3,8 @@
 #include "src/macros.h"
 #include "src/window/RgtWindow.h"
 
-#include <memory.h>
+#include <stdlib.h>
+#include <string.h>
 #include <termios.h>
 
 
@@ -36,7 +37,7 @@ static bool inner__try_modify_terminal(const int fdTerm)
 
 extern RgtWindow* rgt__init(void)
 {
-	RgtWindow *wnd = RgtWindow__create("Rgt window");
+	RgtWindow *wnd = RgtWindow__create("Rgt window", 800, 600);
 	if unlikely (wnd == NULL) {
 		return NULL;
 	}
