@@ -3,10 +3,12 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <locale.h>
 
 
 int main(void)
 {
+	setlocale(LC_ALL, "en_US.UTF-8");
 	RgtWindow *window = rgt__init(800, 600);
 	assert(window != NULL);
 	

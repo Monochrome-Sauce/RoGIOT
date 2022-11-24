@@ -45,12 +45,6 @@ struct winsize RgtWindow__get_size(const RgtWindow *const window)
 	
 	struct winsize ws = { 0 };
 	ioctl(fileno(window->terminal), TIOCGWINSZ, &ws);
-	
-	fprintf(stderr, "%ux%u | %ux%u", ws.ws_col, ws.ws_row, ws.ws_xpixel, ws.ws_ypixel);
-	fprintf(stderr, " == %dx%d\n\n",
-	        RgtWindow__xpixels_to_col(ws.ws_xpixel),
-	        RgtWindow__ypixels_to_row(ws.ws_ypixel));
-	
 	return ws;
 }
 
