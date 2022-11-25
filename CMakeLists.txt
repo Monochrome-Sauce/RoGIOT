@@ -10,6 +10,7 @@ set(SOURCE_LIST
 	
 	proj/src/window/RgtWindow.c
 	proj/src/window/xterm/create.c
+	proj/src/window/xterm/control.c
 )
 
 add_library(${LIB_OUTPUT} STATIC ${SOURCE_LIST})

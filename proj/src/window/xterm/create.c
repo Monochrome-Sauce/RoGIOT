@@ -1,3 +1,4 @@
+#include "src/window/xterm/control.h"
 #define _XOPEN_SOURCE
 #define _XOPEN_SOURCE_EXTENDED
 #include "../xterm.h"
@@ -36,13 +37,12 @@ input and output of the terminal.
 static void inner__clear_xterm(FILE *const xterm)
 {
 	/* clear stdin */
-	char buff[64] = { 0 };
+	char buff[128] = { 0 };
 	char *res = fgets(buff, sizeof (buff), xterm);
 	(void)res;
 	
 	/* clear stdout */
-	fputs("\033c", xterm);
-	fflush(xterm);
+	xterm__clear_screen(fileno(xterm));
 }
 
 
