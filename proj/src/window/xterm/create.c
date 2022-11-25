@@ -46,7 +46,7 @@ static void inner__clear_xterm(FILE *const xterm)
 }
 
 
-FILE* create_xterm(pid_t *const childPid, const char *const title, const int columns, const int rows)
+FILE* xterm__create(pid_t *const childPid, const char *const title, const int columns, const int rows)
 {
 	assert(childPid != NULL);
 	assert(columns > 0 && rows > 0);

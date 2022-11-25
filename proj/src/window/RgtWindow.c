@@ -22,7 +22,7 @@ RgtWindow* RgtWindow__create(const char *const title, int width, int height)
 	if likely (window != NULL) {
 		const int cols = RgtWindow__xpixels_to_col(width);
 		const int rows = RgtWindow__ypixels_to_row(height);
-		window->terminal = create_xterm(&window->child, title, cols, rows);
+		window->terminal = xterm__create(&window->child, title, cols, rows);
 		
 		if (window->terminal == NULL) {
 			rgt_free(window);

@@ -22,7 +22,7 @@
 ! childPid must be a valid pointer.
 ! width and height must be a positive integers.
 */
-FILE* create_xterm(pid_t *childPid, const char *title, int columns, int rows);
+FILE* xterm__create(pid_t *childPid, const char *title, int columns, int rows);
 
 
 #endif /* WINDOW__XTERM__CREATE_H */
