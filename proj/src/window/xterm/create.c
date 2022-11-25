@@ -1,4 +1,3 @@
-#include "src/window/xterm/control.h"
 #define _XOPEN_SOURCE
 #define _XOPEN_SOURCE_EXTENDED
 #include "../xterm.h"
@@ -34,7 +33,7 @@ static int inner__create_pt_master(void)
 ! Reason: some weird number (ending with a newline) is always being left in the
 input and output of the terminal.
 */
-static void inner__clear_xterm(FILE *const xterm)
+static void inner__clear_xterm_io(FILE *const xterm)
 {
 	/* clear stdin */
 	char buff[128] = { 0 };
@@ -42,8 +41,8 @@ static void inner__clear_xterm(FILE *const xterm)
 	(void)res;
 	
 	/* clear stdout */
-	xterm__clear_screen(fileno(xterm));
-	xterm__hide_cursor(fileno(xterm));
+	xterm__clear_screen(xterm);
+	xterm__hide_cursor(xterm);
 }
 
 
@@ -71,7 +70,8 @@ FILE* xterm__create(pid_t *const childPid, const char *const title, const int co
 		
 		FILE *const stream = fdopen(fdSlave, "r+");
 		if likely (stream != NULL) {
-			inner__clear_xterm(stream);
+			setbuf(stream, NULL);
+			inner__clear_xterm_io(stream);
 		}
 		else {
 			close(fdSlave);

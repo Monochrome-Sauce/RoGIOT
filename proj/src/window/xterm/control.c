@@ -3,35 +3,46 @@
 
 #include <limits.h>
 #include <assert.h>
+#include <stdarg.h>
 #include <unistd.h>
 
 
-static bool inner__exec_command(const int fd, const int len, const char command[len])
+static bool inner__exec_command(FILE *const s, const size_t len, const char command[len])
 {
-	const ssize_t res = write(fd, command, (size_t)len);
+	const size_t res = fwrite(command, 1, len, s);
+	
 	assert(res == len);
 	return res == len;
 }
 
-#define XTERM_ESCAPE_COMMAND(fd, commandString) inner__exec_command(fd, SIZEOF_ARRAY(commandString), "\e" commandString)
-#define XTERM_ESCSEQ_MAX 64
-
-
-
-bool xterm__clear_screen(const int fd)
+__attribute__((format(printf, 2, 3)))
+static bool inner__exec_formatted(FILE *const s, const char *fmt, ...)
 {
-	return XTERM_ESCAPE_COMMAND(fd, "c");
+	va_list args;
+	va_start(args, fmt);
+	const int res = vfprintf(s, fmt, args);
+	va_end(args);
+	
+	assert(res > 0);
+	return res > 0;
 }
 
-bool xterm__hide_cursor(const int fd)
+#define XTERM_ESCAPE_COMMAND(fstream, commandString) inner__exec_command(fstream, SIZEOF_ARRAY(commandString), "\e" commandString)
+
+
+
+bool xterm__clear_screen(FILE *const s)
 {
-	return XTERM_ESCAPE_COMMAND(fd, "[?25l");
+	return XTERM_ESCAPE_COMMAND(s, "c");
 }
 
-bool xterm__move_cursor_to(const int fd, int row, int col)
+bool xterm__hide_cursor(FILE *const s)
 {
-	char buff[XTERM_ESCSEQ_MAX] = { 0 };
-	const int len = snprintf(buff, SIZEOF_ARRAY(buff), "\e[%d;%dH", row, col);
-	return inner__exec_command(fd, len, buff);
+	return XTERM_ESCAPE_COMMAND(s, "[?25l");
+}
+
+bool xterm__move_cursor_to(FILE *const s, const int row, const int col)
+{
+	return inner__exec_formatted(s, "\e[%d;%dH", row, col);
 }
 
