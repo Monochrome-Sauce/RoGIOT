@@ -43,6 +43,7 @@ static void inner__clear_xterm(FILE *const xterm)
 	
 	/* clear stdout */
 	xterm__clear_screen(fileno(xterm));
+	xterm__hide_cursor(fileno(xterm));
 }
 
 
