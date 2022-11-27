@@ -21,7 +21,7 @@ struct RgtWindow
 ! @return: a newly created object, or NULL on failure. Pass the object to RgtWindow::destroy()
 when it's no longer used.
 */
-RgtWindow* RgtWindow__create(const char *title, int width, int height);
+RgtWindow* RgtWindow__create(const char title[], int width, int height);
 
 /* #Destroy a terminal window object and clear its used resources.
 ! @param title: window object returned from RgtWindow::create().

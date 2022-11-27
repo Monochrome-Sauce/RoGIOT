@@ -16,7 +16,7 @@ static bool inner__exec_command(FILE *const s, const size_t len, const char comm
 }
 
 __attribute__((format(printf, 2, 3)))
-static bool inner__exec_formatted(FILE *const s, const char *fmt, ...)
+static bool inner__exec_formatted(FILE *const s, const char fmt[], ...)
 {
 	va_list args;
 	va_start(args, fmt);
