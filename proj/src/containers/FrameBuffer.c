@@ -30,9 +30,9 @@ bool FrameBuffer__init(struct FrameBuffer *const buff, const uint16_t width, con
 	return buff->data != NULL;
 }
 
-void FrameBuffer__free(struct FrameBuffer *buff)
+void FrameBuffer__destroy(struct FrameBuffer *const buff)
 {
-	rgt_free(buff);
+	rgt_free(buff->data);
 }
 
 bool FrameBuffer__resize(struct FrameBuffer *const buff, const uint16_t width, const uint16_t height)

@@ -22,9 +22,9 @@ returned, the width and height will be initiated to 0.
 bool FrameBuffer__init(struct FrameBuffer *const buff, uint16_t width, uint16_t height);
 
 /* #Free an object's data.
-! @param buff: pointer to a FrameBuffer.
+! @param buff: pointer to a FrameBuffer initiated with FrameBuffer::init().
 */
-void FrameBuffer__free(struct FrameBuffer *buff);
+void FrameBuffer__destroy(struct FrameBuffer *buff);
 
 /* #Resize an existing object's data.
 ! @param buff: pointer to a FrameBuffer.
