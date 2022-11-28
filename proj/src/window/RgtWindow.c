@@ -7,9 +7,18 @@
 #include <stdlib.h>
 
 
+static void inner__cleanup_failed_create(RgtWindow *window)
+{
+	if (window->terminal != NULL) {
+		fclose(window->terminal);
+	}
+	rgt_free(window);
+}
+
 RgtWindow* RgtWindow__create(const char *const title, int width, int height)
 {
-	assert(width > 0 && height > 0);
+	assert(0 < width && width < UINT16_MAX);
+	assert(0 < height && height < UINT16_MAX);
 	
 	if unlikely (width < XTERM_FONT_W) {
 		width = XTERM_FONT_W;
@@ -18,24 +27,35 @@ RgtWindow* RgtWindow__create(const char *const title, int width, int height)
 		height = XTERM_FONT_H;
 	}
 	
+	
 	RgtWindow *window = rgt_new(RgtWindow);
-	if likely (window != NULL) {
-		const int cols = RgtWindow__xpixels_to_col(width);
-		const int rows = RgtWindow__ypixels_to_row(height);
-		window->terminal = xterm__create(&window->child, title, cols, rows);
-		
-		if (window->terminal == NULL) {
-			rgt_free(window);
-		}
+	if unlikely (window == NULL) {
+		return NULL;
 	}
+	
+	const int cols = RgtWindow__xpixels_to_col(width);
+	const int rows = RgtWindow__ypixels_to_row(height);
+	window->terminal = xterm__create(&window->child, title, cols, rows);
+	if unlikely (window->terminal == NULL) {
+		goto cleanup;
+	}
+	if unlikely (!FrameBuffer__init(&window->frame, (uint16_t)cols, (uint16_t)rows)) {
+		goto cleanup;
+	}
+	
 	return window;
+cleanup:
+	inner__cleanup_failed_create(window);
+	return NULL;
 }
 
 void RgtWindow__destroy(RgtWindow *window)
 {
 	assert(window != NULL);
+	assert(window->terminal != NULL);
 	
 	fclose(window->terminal);
+	FrameBuffer__destroy(&window->frame);
 	rgt_free(window);
 }
 

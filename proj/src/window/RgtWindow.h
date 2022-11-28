@@ -1,6 +1,7 @@
 #ifndef WINDOW__RGT_WINDOW_H
 #define WINDOW__RGT_WINDOW_H
 #include "rogiot/rgt.h"
+#include "src/containers/FrameBuffer.h"
 
 #include <stdio.h>
 #include <sys/types.h>
@@ -11,6 +12,7 @@ struct RgtWindow
 {
 	FILE *terminal;
 	pid_t child;
+	struct FrameBuffer frame;
 };
 
 
