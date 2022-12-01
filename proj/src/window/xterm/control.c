@@ -7,42 +7,34 @@
 #include <unistd.h>
 
 
-static bool inner__exec_command(FILE *const s, const size_t len, const char command[len])
+#define CONTROL_FORMAT_BUFF_SIZE (2 * sizeof (int) * 8)
+
+static bool inner__exec_command(const struct XTerm *x, const unsigned int len, const char command[len])
 {
-	const size_t res = fwrite(command, 1, len, s);
+	const ssize_t res = xterm__write(x, len, command);
 	
 	assert(res == len);
 	return res == len;
 }
 
-__attribute__((format(printf, 2, 3)))
-static bool inner__exec_formatted(FILE *const s, const char fmt[], ...)
+#define XTERM_ESCAPE_COMMAND(xtermStruct, commandString) \
+	inner__exec_command(xtermStruct, SIZEOF_ARRAY(commandString), "\e" commandString)
+
+
+bool xterm__clear_screen(const struct XTerm *x)
 {
-	va_list args;
-	va_start(args, fmt);
-	const int res = vfprintf(s, fmt, args);
-	va_end(args);
+	return XTERM_ESCAPE_COMMAND(x, "c");
+}
+
+bool xterm__hide_cursor(const struct XTerm *x)
+{
+	return XTERM_ESCAPE_COMMAND(x, "[?25l");
+}
+
+bool xterm__move_cursor_to(const struct XTerm *x, const int row, const int col)
+{
+	char buff[CONTROL_FORMAT_BUFF_SIZE] = { 0 };
+	unsigned int len = (unsigned)snprintf(buff, SIZEOF_ARRAY(buff), "\e[%d;%dH", row, col);
 	
-	assert(res > 0);
-	return res > 0;
+	return inner__exec_command(x, len, buff);
 }
-
-#define XTERM_ESCAPE_COMMAND(fstream, commandString) inner__exec_command(fstream, SIZEOF_ARRAY(commandString), "\e" commandString)
-
-
-
-bool xterm__clear_screen(FILE *const s)
-{
-	return XTERM_ESCAPE_COMMAND(s, "c");
-}
-
-bool xterm__hide_cursor(FILE *const s)
-{
-	return XTERM_ESCAPE_COMMAND(s, "[?25l");
-}
-
-bool xterm__move_cursor_to(FILE *const s, const int row, const int col)
-{
-	return inner__exec_formatted(s, "\e[%d;%dH", row, col);
-}
-

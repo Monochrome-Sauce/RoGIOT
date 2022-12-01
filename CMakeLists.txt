@@ -11,6 +11,7 @@ set(SOURCE_LIST
 	proj/src/window/RgtWindow.c
 	proj/src/window/xterm/create.c
 	proj/src/window/xterm/control.c
+	proj/src/window/xterm/io.c
 	
 	proj/src/containers/FrameBuffer.c
 )

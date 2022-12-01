@@ -4,7 +4,6 @@
 #include "src/macros.h"
 
 #include <stdlib.h>    // pid_t, grantpt(), unlockpt(), ptsname(), abort()
-#include <stdio.h>     // FILE*, fdopen(), perror()
 #include <limits.h>    // PATH_MAX
 #include <assert.h>
 
@@ -33,20 +32,24 @@ static int inner__create_pt_master(void)
 ! Reason: some weird number (ending with a newline) is always being left in the
 input and output of the terminal.
 */
-static void inner__clear_xterm_io(FILE *const xterm)
+static void inner__clear_xterm_io(const struct XTerm *x)
 {
 	/* clear stdin */
 	char buff[128] = { 0 };
-	char *res = fgets(buff, sizeof (buff), xterm);
-	(void)res;
+	xterm__read(x, sizeof (buff), buff);
 	
 	/* clear stdout */
-	xterm__clear_screen(xterm);
-	xterm__hide_cursor(xterm);
+	xterm__clear_screen(x);
+	xterm__hide_cursor(x);
+}
+
+static struct XTerm inner__create_invalid(void)
+{
+	return (struct XTerm){ .fd = -1 };
 }
 
 
-FILE* xterm__create(pid_t *const childPid, const char title[], const int columns, const int rows)
+struct XTerm xterm__create(pid_t *const childPid, const char title[], const int columns, const int rows)
 {
 	assert(childPid != NULL);
 	assert(columns > 0 && rows > 0);
@@ -55,29 +58,22 @@ FILE* xterm__create(pid_t *const childPid, const char title[], const int columns
 	
 	const char *const slaveName = ptsname(fdMaster);
 	if unlikely (slaveName == NULL) {
-		return NULL;
+		return inner__create_invalid();
 	}
 	const int fdSlave = open(slaveName, O_RDWR | O_NOCTTY);
 	
 	*childPid = fork();
 	if unlikely (*childPid < 0) {
-		return NULL;
+		return inner__create_invalid();
 	}
 	
 	
 	if (*childPid > 0) { /* parent */
 		close(fdMaster);
 		
-		FILE *const stream = fdopen(fdSlave, "r+");
-		if likely (stream != NULL) {
-			setbuf(stream, NULL);
-			inner__clear_xterm_io(stream);
-		}
-		else {
-			close(fdSlave);
-		}
-		
-		return stream;
+		struct XTerm result = { .fd = fdSlave };
+		inner__clear_xterm_io(&result);
+		return result;
 	}
 	else { /* child */
 		close(fdSlave);
@@ -104,4 +100,17 @@ FILE* xterm__create(pid_t *const childPid, const char title[], const int columns
 		close(fdMaster);
 		abort(); /* abort the child process after xterm ends */
 	}
+}
+
+void xterm__close(struct XTerm *x)
+{
+	assert(x != NULL && x->fd >= 0);
+	close(x->fd);
+	x->fd = -1;
+}
+
+bool xterm__isvalid(const struct XTerm *x)
+{
+	assert(x != NULL);
+	return x->fd >= 0;
 }

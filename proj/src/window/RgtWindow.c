@@ -1,3 +1,4 @@
+#include "src/window/xterm/create.h"
 #define _POSIX_C_SOURCE 1
 #include "./RgtWindow.h"
 #include "src/window/xterm.h"
@@ -9,8 +10,8 @@
 
 static void inner__cleanup_failed_create(RgtWindow *window)
 {
-	if (window->terminal != NULL) {
-		fclose(window->terminal);
+	if (xterm__isvalid(&window->terminal)) {
+		close(window->terminal.fd);
 	}
 	rgt_free(window);
 }
@@ -36,7 +37,8 @@ RgtWindow* RgtWindow__create(const char *const title, int width, int height)
 	const int cols = RgtWindow__xpixels_to_col(width);
 	const int rows = RgtWindow__ypixels_to_row(height);
 	window->terminal = xterm__create(&window->child, title, cols, rows);
-	if unlikely (window->terminal == NULL) {
+	
+	if unlikely (!xterm__isvalid(&window->terminal)) {
 		goto cleanup;
 	}
 	if unlikely (!FrameBuffer__init(&window->frame, (uint16_t)cols, (uint16_t)rows)) {
@@ -52,9 +54,9 @@ cleanup:
 void RgtWindow__destroy(RgtWindow *window)
 {
 	assert(window != NULL);
-	assert(window->terminal != NULL);
+	assert(xterm__isvalid(&window->terminal));
 	
-	fclose(window->terminal);
+	xterm__close(&window->terminal);
 	FrameBuffer__destroy(&window->frame);
 	rgt_free(window);
 }
@@ -64,8 +66,16 @@ struct winsize RgtWindow__get_size(const RgtWindow *const window)
 	assert(window != NULL);
 	
 	struct winsize ws = { 0 };
-	ioctl(fileno(window->terminal), TIOCGWINSZ, &ws);
+	ioctl(window->terminal.fd, TIOCGWINSZ, &ws);
 	return ws;
+}
+
+void RgtWindow__draw_frame(const RgtWindow *const window)
+{
+	const struct FrameBuffer *const frame = &window->frame;
+	xterm__write(&window->terminal, FrameBuffer__area(frame),
+	             *frame->data);
+	xterm__move_cursor_to(&window->terminal, 0, 0);
 }
 
 int RgtWindow__col_to_xpixels(const int column)

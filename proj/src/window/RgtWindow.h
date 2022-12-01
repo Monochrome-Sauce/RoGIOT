@@ -1,6 +1,8 @@
 #ifndef WINDOW__RGT_WINDOW_H
 #define WINDOW__RGT_WINDOW_H
+
 #include "rogiot/rgt.h"
+#include "src/window/xterm.h"
 #include "src/containers/FrameBuffer.h"
 
 #include <stdio.h>
@@ -10,8 +12,8 @@
 
 struct RgtWindow
 {
-	FILE *terminal;
 	pid_t child;
+	struct XTerm terminal;
 	struct FrameBuffer frame;
 };
 
@@ -29,6 +31,10 @@ RgtWindow* RgtWindow__create(const char title[], int width, int height);
 ! @param title: window object returned from RgtWindow::create().
 */
 void RgtWindow__destroy(RgtWindow *window);
+
+/* #Draw the frame contained in the window.
+*/
+void RgtWindow__draw_frame(const RgtWindow *const window);
 
 /* #Fetch the size of the XTERM window.
 */

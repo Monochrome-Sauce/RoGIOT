@@ -43,7 +43,7 @@ extern RgtWindow* rgt__init(const int width, const int height)
 		return NULL;
 	}
 	
-	if unlikely (!inner__try_modify_terminal(fileno(wnd->terminal))) {
+	if unlikely (!inner__try_modify_terminal(wnd->terminal.fd)) {
 		rgt_free(wnd);
 	}
 	return wnd;
