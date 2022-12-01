@@ -64,3 +64,8 @@ FrameBuffer_DataType* FrameBuffer__at(struct FrameBuffer *const buff,
 	
 	return &(*buff->data)[y * buff->width + x];
 }
+
+uint32_t FrameBuffer__area(const struct FrameBuffer *const buff)
+{
+	return inner__calc_size(buff->width, buff->height);
+}

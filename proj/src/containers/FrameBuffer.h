@@ -40,5 +40,11 @@ bool FrameBuffer__resize(struct FrameBuffer *buff, uint16_t width, uint16_t heig
 */
 FrameBuffer_DataType* FrameBuffer__at(struct FrameBuffer *buff, uint16_t x, uint16_t y);
 
+/* #Get the accessable area of the buffer.
+! @param buff: pointer to a FrameBuffer.
+! @return: product of the width and height of the buffer.
+*/
+uint32_t FrameBuffer__area(const struct FrameBuffer *buff);
+
 
 #endif /* CONTAINERS__FRAME_BUFFER_H */
