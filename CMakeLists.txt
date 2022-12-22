@@ -25,12 +25,14 @@ target_include_directories(${LIB_OUTPUT}
 )
 
 target_link_libraries(${LIB_OUTPUT}
+	asan ubsan
 	m pthread
 )
 
 target_compile_options(${LIB_OUTPUT}
 	PRIVATE -std=c17 -Werror -O1
 	PRIVATE -Wall -Wextra -Wsign-compare -Wconversion
+	PRIVATE -fsanitize=address,undefined
 )
 
 
