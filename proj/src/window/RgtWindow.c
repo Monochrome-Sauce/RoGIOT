@@ -1,5 +1,3 @@
-#include "src/window/xterm/create.h"
-#define _POSIX_C_SOURCE 1
 #include "./RgtWindow.h"
 #include "src/window/xterm.h"
 #include "src/macros.h"

@@ -1,4 +1,3 @@
-
 #ifndef ROGIOT__RGT_H
 #define ROGIOT__RGT_H
 
@@ -54,6 +53,45 @@ extern RgtWindow* rgt__init(int width, int height);
 ! @window: result of an rgt::init() call. Must NOT be NULL.
 */
 extern void rgt__deinit(RgtWindow *window);
+
+
+
+
+
+struct RgtVertex {
+	union {
+		float v[4];
+		struct {
+			float x, y, z, w;
+		} pos;
+		struct {
+			float r, g, b, a;
+		} col;
+	};
+};
+
+typedef struct RgtVertex (RgtFunc_VertexShader)(const void*);
+
+struct RgtDrawData {
+	/* user function which evaluates every member of 'vertices' into an RgtVertex structure */
+	RgtFunc_VertexShader *vshader;
+	
+	const void *vertices; /* array of user objects, each member is passed to 'vshader()' */
+	unsigned int count; /* number of members 'vertices' points at */
+	unsigned int memSize; /* size in bytes of each member in 'vertices' */
+};
+
+
+/* #Draw lines between 2 points.
+! @param wnd: the window to draw to.
+! @param drawData: a structure containing the data necessary for drawing.
+*/
+extern void rgt__draw_2p(RgtWindow *wnd, const struct RgtDrawData *drawData);
+
+/* #Flush the data to the window. Uses a new buffer which should be cleared with rgt__clearempty.
+! @param wnd: the window to draw on.
+*/
+extern void rgt__swap_buffers(RgtWindow *window);
 
 
 #endif /* ROGIOT__RGT_H */

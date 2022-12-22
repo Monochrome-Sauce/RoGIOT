@@ -1,10 +1,22 @@
-#define _POSIX_C_SOURCE 1
 #include "rogiot/rgt.h"
+#include "src/macros.h"
 
 #include <stdlib.h>
 #include <stdio.h>
 #include <locale.h>
 
+
+typedef struct {
+	float x;
+	float y;
+} Vertex;
+
+
+static struct RgtVertex vertShader(const void *_data)
+{
+	const Vertex *vert = _data;
+	return (struct RgtVertex){ .pos.x = vert->x, .pos.y = vert->y, };
+}
 
 int main(void)
 {
@@ -24,6 +36,28 @@ int main(void)
 		assert(errDesc != NULL);
 		fprintf(stderr, "\r(%d) %s: %s.\n", err, errName, errDesc);
 	} while (err != RGT__E_OK);
+	
+	Vertex points[] = {
+		{+0.60f, +0.4f}, {+0.60f, -0.6f},
+		{-0.60f, +0.4f}, {-0.60f, -0.6f},
+		{+0.30f, +0.2f}, {+0.30f, -0.25f},
+		{-0.30f, +0.2f}, {-0.30f, -0.25f},
+		{+0.15f, +0.1f}, {+0.15f, -0.05f},
+		{-0.15f, +0.1f}, {-0.15f, -0.05f},
+		
+		{-0.9f, -1.0f}, {-0.15f, -0.05f},
+		{+0.9f, -1.0f}, {+0.15f, -0.05f},
+	};
+	
+	struct RgtDrawData data = {
+		.vshader  = vertShader,
+		.vertices = points,
+		.count    = SIZEOF_ARRAY(points),
+		.memSize  = sizeof (*points),
+	};
+	
+	rgt__draw_2p(window, &data);
+	rgt__swap_buffers(window);
 	
 	fputs("\nPress <ENTER> to exit... ", stderr);
 	getc(stdin);
