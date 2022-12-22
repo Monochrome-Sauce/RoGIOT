@@ -52,7 +52,7 @@ extern RgtWindow* rgt__init(int width, int height);
 /* #Clears the resources used by a created RgtWindow object.
 ! @window: result of an rgt::init() call. Must NOT be NULL.
 */
-extern void rgt__deinit(RgtWindow *window);
+extern void rgt__deinit(RgtWindow *wnd);
 
 
 
@@ -91,7 +91,7 @@ extern void rgt__draw_2p(RgtWindow *wnd, const struct RgtDrawData *drawData);
 /* #Flush the data to the window. Uses a new buffer which should be cleared with rgt__clearempty.
 ! @param wnd: the window to draw on.
 */
-extern void rgt__swap_buffers(RgtWindow *window);
+extern void rgt__swap_buffers(RgtWindow *wnd);
 
 
 #endif /* ROGIOT__RGT_H */

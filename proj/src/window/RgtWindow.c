@@ -6,12 +6,12 @@
 #include <stdlib.h>
 
 
-static void inner__cleanup_failed_create(RgtWindow *window)
+static void inner__cleanup_failed_create(RgtWindow *wnd)
 {
-	if (xterm__isvalid(&window->terminal)) {
-		close(window->terminal.fd);
+	if (xterm__isvalid(&wnd->terminal)) {
+		close(wnd->terminal.fd);
 	}
-	rgt_free(window);
+	rgt_free(wnd);
 }
 
 RgtWindow* RgtWindow__create(const char *const title, int width, int height)
@@ -49,31 +49,31 @@ cleanup:
 	return NULL;
 }
 
-void RgtWindow__destroy(RgtWindow *window)
+void RgtWindow__destroy(RgtWindow *wnd)
 {
-	assert(window != NULL);
-	assert(xterm__isvalid(&window->terminal));
+	assert(wnd != NULL);
+	assert(xterm__isvalid(&wnd->terminal));
 	
-	xterm__close(&window->terminal);
-	FrameBuffer__destroy(&window->frame);
-	rgt_free(window);
+	xterm__close(&wnd->terminal);
+	FrameBuffer__destroy(&wnd->frame);
+	rgt_free(wnd);
 }
 
-struct winsize RgtWindow__get_size(const RgtWindow *const window)
+struct winsize RgtWindow__get_size(const RgtWindow *const wnd)
 {
-	assert(window != NULL);
+	assert(wnd != NULL);
 	
 	struct winsize ws = { 0 };
-	ioctl(window->terminal.fd, TIOCGWINSZ, &ws);
+	ioctl(wnd->terminal.fd, TIOCGWINSZ, &ws);
 	return ws;
 }
 
-void RgtWindow__draw_frame(const RgtWindow *const window)
+void RgtWindow__draw_frame(const RgtWindow *const wnd)
 {
-	const struct FrameBuffer *const frame = &window->frame;
-	xterm__write(&window->terminal, FrameBuffer__area(frame),
+	const struct FrameBuffer *const frame = &wnd->frame;
+	xterm__write(&wnd->terminal, FrameBuffer__area(frame),
 	             *frame->data);
-	xterm__move_cursor_to(&window->terminal, 0, 0);
+	xterm__move_cursor_to(&wnd->terminal, 0, 0);
 }
 
 int RgtWindow__col_to_xpixels(const int column)

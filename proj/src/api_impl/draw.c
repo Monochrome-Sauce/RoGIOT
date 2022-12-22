@@ -147,7 +147,7 @@ extern void rgt__draw_2p(RgtWindow *const wnd, const struct RgtDrawData *const d
 	}
 }
 
-extern void rgt__swap_buffers(RgtWindow *const window)
+extern void rgt__swap_buffers(RgtWindow *const wnd)
 {
-	RgtWindow__draw_frame(window);
+	RgtWindow__draw_frame(wnd);
 }

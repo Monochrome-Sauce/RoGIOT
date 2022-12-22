@@ -28,17 +28,17 @@ when it's no longer used.
 RgtWindow* RgtWindow__create(const char title[], int width, int height);
 
 /* #Destroy a terminal window object and clear its used resources.
-! @param title: window object returned from RgtWindow::create().
+! @param wnd: window object returned from RgtWindow::create().
 */
-void RgtWindow__destroy(RgtWindow *window);
+void RgtWindow__destroy(RgtWindow *wnd);
 
 /* #Draw the frame contained in the window.
 */
-void RgtWindow__draw_frame(const RgtWindow *const window);
+void RgtWindow__draw_frame(const RgtWindow *const wnd);
 
 /* #Fetch the size of the XTERM window.
 */
-struct winsize RgtWindow__get_size(const RgtWindow *window);
+struct winsize RgtWindow__get_size(const RgtWindow *wnd);
 
 /* #Calculate the width in pixels using the number of columns.
 */

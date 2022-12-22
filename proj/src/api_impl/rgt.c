@@ -48,7 +48,7 @@ extern RgtWindow* rgt__init(const int width, const int height)
 	return wnd;
 }
 
-extern void rgt__deinit(RgtWindow *const window)
+extern void rgt__deinit(RgtWindow *const wnd)
 {
-	RgtWindow__destroy(window);
+	RgtWindow__destroy(wnd);
 }
