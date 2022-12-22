@@ -108,6 +108,15 @@ static int inner__real_to_display(float real, int display)
 	return (int)roundf((float)display * (real + 1.0f) / 2);
 }
 
+static void inner__normalize_vertex(struct RgtVertex *const vertex)
+{
+	const float w = vertex->v[3];
+	for (unsigned int i = 0; i < SIZEOF_ARRAY(vertex->v); ++i)
+	{
+		vertex->v[i] /= w;
+	}
+}
+
 extern void rgt__draw_2p(RgtWindow *const wnd, const struct RgtDrawData *const drawData)
 {
 	assert(drawData->vshader != NULL);
@@ -123,6 +132,7 @@ extern void rgt__draw_2p(RgtWindow *const wnd, const struct RgtDrawData *const d
 		for (unsigned int i = 0; i < SIZEOF_ARRAY(p); ++i)
 		{
 			struct RgtVertex v = drawData->vshader(currVertex);
+			inner__normalize_vertex(&v);
 			p[i].x = inner__real_to_display(v.pos.x, wnd->frame.width);
 			p[i].y = inner__real_to_display(v.pos.y, wnd->frame.height);
 			currVertex += step;

@@ -15,7 +15,14 @@ typedef struct {
 static struct RgtVertex vertShader(const void *_data)
 {
 	const Vertex *vert = _data;
-	return (struct RgtVertex){ .pos.x = vert->x, .pos.y = vert->y, };
+	return (struct RgtVertex){
+		.pos = {
+			.x = vert->x,
+			.y = vert->y,
+			.z = 0.0f,
+			.w = 1.0f,
+		},
+	};
 }
 
 int main(void)
