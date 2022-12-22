@@ -117,7 +117,7 @@ static void inner__normalize_vertex(struct RgtVertex *const vertex)
 	}
 }
 
-extern void rgt__draw_2p(RgtWindow *const wnd, const struct RgtDrawData *const drawData)
+extern void rgt__draw_lines(RgtWindow *const wnd, const struct RgtDrawData *const drawData)
 {
 	assert(drawData->vshader != NULL);
 	assert(drawData->count % 2 == 0);

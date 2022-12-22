@@ -82,11 +82,11 @@ struct RgtDrawData {
 };
 
 
-/* #Draw lines between 2 points.
+/* #Draw multiple lines between 2 points.
 ! @param wnd: the window to draw to.
 ! @param drawData: a structure containing the data necessary for drawing.
 */
-extern void rgt__draw_2p(RgtWindow *wnd, const struct RgtDrawData *drawData);
+extern void rgt__draw_lines(RgtWindow *wnd, const struct RgtDrawData *drawData);
 
 /* #Flush the data to the window. Uses a new buffer which should be cleared with rgt__clearempty.
 ! @param wnd: the window to draw on.

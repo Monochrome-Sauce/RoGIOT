@@ -63,7 +63,7 @@ int main(void)
 		.memSize  = sizeof (*points),
 	};
 	
-	rgt__draw_2p(window, &data);
+	rgt__draw_lines(window, &data);
 	rgt__swap_buffers(window);
 	
 	fputs("\nPress <ENTER> to exit... ", stderr);
