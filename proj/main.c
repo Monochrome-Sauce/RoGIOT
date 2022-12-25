@@ -56,14 +56,16 @@ int main(void)
 		{+0.9f, -1.0f}, {+0.15f, -0.05f},
 	};
 	
-	struct RgtDrawData data = {
-		.vshader  = vertShader,
+	struct RgtArrayObject array = {
 		.vertices = points,
 		.count    = SIZEOF_ARRAY(points),
 		.memSize  = sizeof (*points),
 	};
+	struct RgtShaderFuncs shader = {
+		.vertex  = vertShader,
+	};
 	
-	rgt__draw_lines(window, &data);
+	rgt__draw_lines(window, &array, &shader);
 	rgt__swap_buffers(window);
 	
 	fputs("\nPress <ENTER> to exit... ", stderr);

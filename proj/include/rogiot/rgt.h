@@ -72,21 +72,28 @@ struct RgtVertex {
 
 typedef struct RgtVertex (RgtFunc_VertexShader)(const void*);
 
-struct RgtDrawData {
-	/* user function which evaluates every member of 'vertices' into an RgtVertex structure */
-	RgtFunc_VertexShader *vshader;
-	
+struct RgtArrayObject {
 	const void *vertices; /* array of user objects, each member is passed to 'vshader()' */
 	unsigned int count; /* number of members 'vertices' points at */
 	unsigned int memSize; /* size in bytes of each member in 'vertices' */
+};
+
+/* user functions which are evaluated for every member of 'RgtDrawData::vertices' */
+struct RgtShaderFuncs {
+	RgtFunc_VertexShader *vertex;
 };
 
 
 /* #Draw multiple lines between 2 points.
 ! @param wnd: the window to draw to.
 ! @param drawData: a structure containing the data necessary for drawing.
+! @param shader: a structure containing pointers to shader functions
 */
-extern void rgt__draw_lines(RgtWindow *wnd, const struct RgtDrawData *drawData);
+extern void rgt__draw_lines(
+	RgtWindow *wnd,
+	const struct RgtArrayObject *array,
+	const struct RgtShaderFuncs *shader
+);
 
 /* #Flush the data to the window. Uses a new buffer which should be cleared with rgt__clearempty.
 ! @param wnd: the window to draw on.

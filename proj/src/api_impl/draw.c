@@ -117,21 +117,25 @@ static void inner__normalize_vertex(struct RgtVertex *const vertex)
 	}
 }
 
-extern void rgt__draw_lines(RgtWindow *const wnd, const struct RgtDrawData *const drawData)
-{
-	assert(drawData->vshader != NULL);
-	assert(drawData->count % 2 == 0);
+extern void rgt__draw_lines(
+	RgtWindow *const wnd,
+	const struct RgtArrayObject *const array,
+	const struct RgtShaderFuncs *const shader
+) {
+	assert(array != NULL && shader != NULL);
+	assert(array->vertices != NULL && shader->vertex != NULL);
+	assert(array->count % 2 == 0);
 	
-	const char *currVertex = drawData->vertices;
-	const char *const endVertex = currVertex + ((size_t)drawData->count * drawData->memSize);
-	const ptrdiff_t step = drawData->memSize;
+	const char *currVertex = array->vertices;
+	const char *const endVertex = currVertex + ((size_t)array->count * array->memSize);
+	const ptrdiff_t step = array->memSize;
 	
 	while (currVertex != endVertex)
 	{
 		RgtPoint_i p[2] = { 0 };
 		for (unsigned int i = 0; i < SIZEOF_ARRAY(p); ++i)
 		{
-			struct RgtVertex v = drawData->vshader(currVertex);
+			struct RgtVertex v = shader->vertex(currVertex);
 			inner__normalize_vertex(&v);
 			p[i].x = inner__real_to_display(v.pos.x, wnd->frame.width);
 			p[i].y = inner__real_to_display(v.pos.y, wnd->frame.height);
