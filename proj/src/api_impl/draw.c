@@ -124,22 +124,23 @@ extern void rgt__draw_lines(
 ) {
 	assert(array != NULL && shader != NULL);
 	assert(array->vertices != NULL && shader->vertex != NULL);
-	assert(array->count % 2 == 0);
 	
-	const char *currVertex = array->vertices;
-	const char *const endVertex = currVertex + ((size_t)array->count * array->memSize);
-	const ptrdiff_t step = array->memSize;
+	enum { POINT_COUNT = 2 };
 	
-	while (currVertex != endVertex)
+	const ptrdiff_t count = array->length - (array->length % POINT_COUNT);
+	const char *vertexCurr = array->vertices;
+	const char *const vertexEnd = vertexCurr + count * array->memSize;
+	
+	while (vertexCurr < vertexEnd)
 	{
-		RgtPoint_i p[2] = { 0 };
-		for (unsigned int i = 0; i < SIZEOF_ARRAY(p); ++i)
+		RgtPoint_i p[POINT_COUNT] = { 0 };
+		for (int i = 0; i < POINT_COUNT; ++i)
 		{
-			struct RgtVertex v = shader->vertex(currVertex);
+			struct RgtVertex v = shader->vertex(vertexCurr);
 			inner__normalize_vertex(&v);
 			p[i].x = inner__real_to_display(v.pos.x, wnd->frame.width);
 			p[i].y = inner__real_to_display(v.pos.y, wnd->frame.height);
-			currVertex += step;
+			vertexCurr += array->memSize;
 		}
 		
 		Ctx_point_generator ctx = { .p = p[0] };

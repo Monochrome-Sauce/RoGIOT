@@ -73,8 +73,9 @@ struct RgtVertex {
 typedef struct RgtVertex (RgtFunc_VertexShader)(const void*);
 
 struct RgtArrayObject {
-	const void *vertices; /* array of user objects, each member is passed to 'vshader()' */
-	unsigned int count; /* number of members 'vertices' points at */
+	/* pointer to an array of user objects, each object is passed to 'RgtShaderFuncs::vertex()'. */
+	const void *vertices;
+	unsigned int length; /* number of members 'vertices' points at */
 	unsigned int memSize; /* size in bytes of each member in 'vertices' */
 };
 

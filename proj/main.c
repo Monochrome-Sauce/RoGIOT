@@ -54,11 +54,12 @@ int main(void)
 		
 		{-0.9f, -1.0f}, {-0.15f, -0.05f},
 		{+0.9f, -1.0f}, {+0.15f, -0.05f},
+		{+0.8f, -0.5f},// {+0.15f, -0.0f},
 	};
 	
 	struct RgtArrayObject array = {
 		.vertices = points,
-		.count    = SIZEOF_ARRAY(points),
+		.length   = SIZEOF_ARRAY(points),
 		.memSize  = sizeof (*points),
 	};
 	struct RgtShaderFuncs shader = {
