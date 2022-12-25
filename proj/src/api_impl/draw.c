@@ -2,9 +2,9 @@
 #include "src/window/RgtWindow.h"
 #include "src/macros.h"
 #include "src/coroutine.h"
+#include "src/PtrIter.h"
 
 #include <stdlib.h>
-#include <stddef.h>
 #include <math.h>
 
 
@@ -128,19 +128,19 @@ extern void rgt__draw_lines(
 	enum { POINT_COUNT = 2 };
 	
 	const ptrdiff_t count = array->length - (array->length % POINT_COUNT);
-	const char *vertexCurr = array->vertices;
-	const char *const vertexEnd = vertexCurr + count * array->memSize;
+	struct ConstPtrIter iter = { array->vertices, array->memSize };
+	const struct ConstPtrIter end = PtrIter__COPY_AT(iter, count);
 	
-	while (vertexCurr < vertexEnd)
+	while (iter.ptr < end.ptr)
 	{
 		RgtPoint_i p[POINT_COUNT] = { 0 };
 		for (int i = 0; i < POINT_COUNT; ++i)
 		{
-			struct RgtVertex v = shader->vertex(vertexCurr);
+			struct RgtVertex v = shader->vertex(iter.ptr);
 			inner__normalize_vertex(&v);
 			p[i].x = inner__real_to_display(v.pos.x, wnd->frame.width);
 			p[i].y = inner__real_to_display(v.pos.y, wnd->frame.height);
-			vertexCurr += array->memSize;
+			PtrIter__INC(iter);
 		}
 		
 		Ctx_point_generator ctx = { .p = p[0] };
