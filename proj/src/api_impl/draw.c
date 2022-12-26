@@ -13,15 +13,16 @@ typedef struct {
 	int x, y;
 } RgtPoint_i;
 
-typedef struct {
+struct inner__generate_point {
 	int _co__state;
 	
-	int _deltaX, _deltaY;
-	int _signX, _signY;
-	int _error;
+	int m_deltaX, m_deltaY;
+	int m_signX, m_signY;
+	int m_error;
 	
-	RgtPoint_i p;
-} Ctx_point_generator;
+	RgtPoint_i _begin;
+	RgtPoint_i _end;
+};
 
 
 /*void plot_line(RgtPoint_i p, const RgtPoint_i final)
@@ -53,43 +54,43 @@ typedef struct {
 	}
 }*/
 
-static void inner__point_generator(Ctx_point_generator *const ctx, const RgtPoint_i final)
+static RgtPoint_i inner__generate_point(struct inner__generate_point *const ctx)
 {
-	RgtPoint_i *const p = &ctx->p;
 	CO__START(*ctx);
 	
-	ctx->_deltaX = abs(final.x - p->x);
-	ctx->_deltaY = -abs(final.y - p->y);
-	ctx->_signX = final.x > p->x ? 1 : -1;
-	ctx->_signY = final.y > p->y ? 1 : -1;
-	ctx->_error = ctx->_deltaX + ctx->_deltaY;
+	ctx->m_deltaX = abs(ctx->_end.x - ctx->_begin.x);
+	ctx->m_deltaY = -abs(ctx->_end.y - ctx->_begin.y);
+	ctx->m_signX = ctx->_end.x > ctx->_begin.x ? 1 : -1;
+	ctx->m_signY = ctx->_end.y > ctx->_begin.y ? 1 : -1;
+	ctx->m_error = ctx->m_deltaX + ctx->m_deltaY;
 	
 	while (true)
 	{
-		CO__YIELD(*ctx);
-		if (p->x == final.x && p->y == final.y) { 
+		CO__YIELD(*ctx, ctx->_begin);
+		if (ctx->_begin.x == ctx->_end.x && ctx->_begin.y == ctx->_end.y) { 
 			CO__FINISH();
 		};
 		
-		const int e2 = 2 * ctx->_error;
-		if (e2 >= ctx->_deltaY) {
-			if (p->x == final.x) {
+		const int e2 = 2 * ctx->m_error;
+		if (e2 >= ctx->m_deltaY) {
+			if (ctx->_begin.x == ctx->_end.x) {
 				CO__FINISH();
 			}
-			ctx->_error += ctx->_deltaY;
-			p->x += ctx->_signX;
+			ctx->m_error += ctx->m_deltaY;
+			ctx->_begin.x += ctx->m_signX;
 		}
 		
-		if (e2 <= ctx->_deltaX) {
-			if (p->y == final.y) {
+		if (e2 <= ctx->m_deltaX) {
+			if (ctx->_begin.y == ctx->_end.y) {
 				CO__FINISH();
 			}
-			ctx->_error += ctx->_deltaX;
-			p->y += ctx->_signY;
+			ctx->m_error += ctx->m_deltaX;
+			ctx->_begin.y += ctx->m_signY;
 		}
 	}
 	
 	CO__END(*ctx);
+	return ctx->_begin;
 }
 
 static void inner__plot_point(const RgtPoint_i *p, struct FrameBuffer *buff,
@@ -143,11 +144,14 @@ extern void rgt__draw_lines(
 			PtrIter__INC(iter);
 		}
 		
-		Ctx_point_generator ctx = { .p = p[0] };
+		struct inner__generate_point ctx = {
+			._begin = p[0],
+			._end = p[1]
+		};
 		CO__INIT_CTX(ctx);
 		do {
-			inner__point_generator(&ctx, p[1]);
-			inner__plot_point(&ctx.p, &wnd->frame, '#');
+			RgtPoint_i point = inner__generate_point(&ctx);
+			inner__plot_point(&point, &wnd->frame, '#');
 		} while (!CO__IS_FINISHED(ctx));
 	}
 }
